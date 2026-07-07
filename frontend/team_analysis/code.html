@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IPL Analytics | Team Analysis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    :root {
+      --glass-bg: rgba(15, 23, 42, 0.4);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+    body {
+      background-color: #020617;
+      color: #e4e2e4;
+      font-family: 'Inter', sans-serif;
+    }
+    .glass-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--glass-border);
+      border-left: 1px solid var(--glass-border);
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--glass-border);
+      border-left: 1px solid var(--glass-border);
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .glass-card:hover {
+      background: rgba(30, 41, 59, 0.8);
+      transform: translateY(-4px);
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Hide scrollbar but keep functionality */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "surface-variant": "#353436",
+                  "secondary-container": "#592da2",
+                  "primary-fixed": "#dae2fd",
+                  "error": "#ffb4ab",
+                  "on-surface-variant": "#c6c6cd",
+                  "on-primary-container": "#798098",
+                  "on-secondary-container": "#c8aaff",
+                  "inverse-primary": "#565e74",
+                  "outline": "#909097",
+                  "surface-container-lowest": "#0e0e10",
+                  "surface-container-low": "#1b1b1d",
+                  "inverse-on-surface": "#303032",
+                  "on-tertiary-container": "#957d5a",
+                  "surface-tint": "#bec6e0",
+                  "on-secondary-fixed": "#260059",
+                  "tertiary-fixed": "#fcdeb5",
+                  "surface": "#131315",
+                  "surface-dim": "#131315",
+                  "on-tertiary-fixed-variant": "#574425",
+                  "surface-container": "#1f1f21",
+                  "surface-container-high": "#2a2a2b",
+                  "on-error-container": "#ffdad6",
+                  "on-primary": "#283044",
+                  "primary": "#bec6e0",
+                  "tertiary": "#dec29a",
+                  "on-background": "#e4e2e4",
+                  "outline-variant": "#45464d",
+                  "background": "#131315",
+                  "secondary-fixed": "#ebdcff",
+                  "on-surface": "#e4e2e4",
+                  "surface-bright": "#39393b",
+                  "on-primary-fixed": "#131b2e",
+                  "on-secondary": "#3f0689",
+                  "on-secondary-fixed-variant": "#572ba0",
+                  "secondary": "#d3bbff",
+                  "on-tertiary": "#3e2d11",
+                  "on-primary-fixed-variant": "#3f465c",
+                  "secondary-fixed-dim": "#d3bbff",
+                  "tertiary-container": "#231500",
+                  "on-error": "#690005",
+                  "primary-fixed-dim": "#bec6e0",
+                  "surface-container-highest": "#353436",
+                  "primary-container": "#0f172a",
+                  "inverse-surface": "#e4e2e4",
+                  "on-tertiary-fixed": "#271901",
+                  "error-container": "#93000a",
+                  "tertiary-fixed-dim": "#dec29a"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          },
+          "spacing": {
+                  "md": "16px",
+                  "container-max": "1440px",
+                  "base": "4px",
+                  "lg": "24px",
+                  "xs": "4px",
+                  "sm": "8px",
+                  "xl": "40px",
+                  "gutter": "20px"
+          },
+          "fontFamily": {
+                  "body-lg": ["Inter"],
+                  "headline-lg": ["Inter"],
+                  "body-md": ["Inter"],
+                  "label-md": ["JetBrains Mono"],
+                  "headline-md": ["Inter"],
+                  "display-lg": ["Inter"],
+                  "label-sm": ["JetBrains Mono"]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-surface-container-lowest text-on-surface">
+<!-- Side Navigation Bar (Shared Component) -->
+<nav class="fixed left-0 top-0 h-screen w-[80px] hover:w-[240px] transition-all duration-300 z-50 bg-surface/40 backdrop-blur-lg border-r border-white/10 shadow-2xl flex flex-col py-lg group">
+<div class="px-md mb-xl flex items-center overflow-hidden whitespace-nowrap">
+<div class="w-10 h-10 bg-secondary-container rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-secondary-container">sports_cricket</span>
+</div>
+<div class="ml-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">IPL Analytics</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">~By Ninganna</p>
+</div>
+</div>
+<div class="flex-1 space-y-sm px-sm overflow-hidden">
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../tournament_overview/code.html">
+<span class="material-symbols-outlined mr-md">dashboard</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../team_analysis/code.html">
+<span class="material-symbols-outlined mr-md">groups</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Team Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../batting_analysis/code.html">
+<span class="material-symbols-outlined mr-md">sports_cricket</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Batting Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-secondary-fixed-dim bg-secondary-container/30 border-l-4 border-secondary transition-all duration-200" href="../bowling_analysis/code.html">
+<span class="material-symbols-outlined mr-md" style="font-variation-settings: 'FILL' 1;">sports_baseball</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Bowling Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../match_analysis/code.html">
+<span class="material-symbols-outlined mr-md">analytics</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Match Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../player_comparison/code.html">
+<span class="material-symbols-outlined mr-md">compare_arrows</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Player Comparison</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../venue_analysis/code.html">
+<span class="material-symbols-outlined mr-md">stadium</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Venue Analysis</span>
+</a>
+</div>
+<div class="px-sm mb-md">
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../settings/code.html">
+<span class="material-symbols-outlined mr-md">settings</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 w-full z-40 bg-surface/40 backdrop-blur-md border-b border-white/10 flex justify-between items-center px-xl h-20 shadow-sm">
+<div class="flex items-center gap-xl">
+<span class="font-headline-md text-headline-md font-extrabold text-on-surface">IPL                   Analytics</span>
+<div class="hidden md:flex items-center gap-lg">
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">2024 Season</a>
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-primary font-bold border-b-2 border-primary pb-1" href="#">All Teams</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative group">
+<div class="flex items-center gap-sm bg-surface-container-high/50 border border-white/10 px-md py-sm rounded-lg focus-within:ring-1 focus-within:ring-primary/50">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 font-body-md text-on-surface placeholder:text-on-surface-variant/50" placeholder="Search data points..." type="text"/>
+</div>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-on-surface">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full border border-secondary p-[2px]">
+<img alt="Analyst Profile" class="w-full h-full object-cover rounded-full" data-alt="A professional headshot of a sports data analyst wearing a crisp navy blazer in a modern office environment. The background shows blurred digital screens with cricket statistics and data charts. The lighting is bright and professional, emphasizing a high-stakes corporate scouting atmosphere with a deep navy and cool gray color palette." src="https://grabcad.com/screenshots/pics/d2004693a143f320680d7291ff371eab/large.png"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[80px] p-xl flex flex-col gap-xl max-w-[1440px] mx-auto">
+<!-- Hero / Team Selector Section -->
+<section class="flex flex-col md:flex-row gap-lg items-end justify-between">
+<div class="flex flex-col gap-sm">
+<div class="flex items-center gap-sm mb-base">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+<span class="text-emerald-400 font-label-sm text-label-sm uppercase tracking-widest">Live Match Streaming Enabled</span>
+</div>
+<h2 class="font-display-lg text-display-lg text-on-surface">Team Analysis Dashboard</h2>
+<div class="relative group mt-md">
+<select class="appearance-none bg-surface-container-high/60 backdrop-blur-md border border-white/10 text-on-surface px-lg py-md pr-xl rounded-xl font-headline-md text-headline-md cursor-pointer hover:border-secondary transition-all focus:ring-2 focus:ring-secondary/50 outline-none w-full md:w-[400px]">
+<option selected="" value="csk">Chennai Super Kings</option>
+<option value="mi">Mumbai Indians</option>
+<option value="rcb">Royal Challengers Bengaluru</option>
+<option value="kkr">Kolkata Knight Riders</option>
+<option value="gt">Gujarat Titans</option>
+<option value="rr">Rajasthan Royals</option>
+<option value="lsg">Lucknow Super Giants</option>
+<option value="dc">Delhi Capitals</option>
+<option value="pbks">Punjab Kings</option>
+<option value="srh">Sunrisers Hyderabad</option>
+</select>
+<span class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 pointer-events-none text-secondary">expand_more</span>
+</div>
+</div>
+<!-- Quick Action Filters -->
+<div class="flex bg-surface-container/60 backdrop-blur-md p-base rounded-xl border border-white/5">
+<button class="px-md py-sm bg-secondary rounded-lg text-on-secondary font-label-sm text-label-sm transition-all">ALL SEASONS</button>
+<button class="px-md py-sm hover:bg-white/5 text-on-surface-variant rounded-lg font-label-sm text-label-sm transition-all">LAST 5 MATCHES</button>
+<button class="px-md py-sm hover:bg-white/5 text-on-surface-variant rounded-lg font-label-sm text-label-sm transition-all">HEAD-TO-HEAD</button>
+</div>
+</section>
+<!-- Team Profile Bento Section -->
+<section class="grid grid-cols-12 gap-lg">
+<!-- Primary Profile Card -->
+<div class="col-span-12 lg:col-span-4 glass-card p-xl rounded-full relative overflow-hidden flex flex-col justify-between min-h-[340px]">
+<div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 blur-3xl -z-10 rounded-full"></div>
+<div class="flex justify-between items-start">
+<div class="w-24 h-24 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 p-md">
+<!-- Simulated Logo Placeholder -->
+<img alt="Team Logo" class="w-full h-full object-contain filter grayscale brightness-200" data-alt="A stylized, modern geometric logo of a yellow lion representing the Chennai Super Kings IPL team. The logo is set against a dark glassmorphic background with golden light refraction effects and subtle motion blur. The aesthetic is high-end, sleek, and minimalist, using a color palette of gold, deep navy, and charcoal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtQ_SfgcUVqTeJEdoxkyC5pvyxg2CMocOejW_MbKDO7w0v_Q_Wt5evMUpAsqDBqH-XawewRKX50HguE9WGIwq7IoimVe4eWO5y9JGuxAGQ19jVQoplnG371l4KJW9b0wczDN_OOqvFChZiHKvZJoP6r0QNRSZaLMk4fRt2cj5NZJoV1xGHpAdxDsPI-SGNFsy8zRMv3g5MvS1K7I12PpjmzW_cyh_OtO61-FBIpR6zzLO691v_FIoEswyjhiISAYSf7NCwE9TIzBmK"/>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-on-surface-variant font-label-sm text-label-sm">HOME GROUND</span>
+<span class="font-headline-md text-headline-md font-bold">M. A. Chidambaram</span>
+</div>
+</div>
+<div>
+<div class="mb-md">
+<h3 class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest mb-xs">Captain</h3>
+<p class="font-headline-lg text-headline-lg text-secondary">Ruturaj Gaikwad</p>
+</div>
+<div class="flex gap-xl">
+<div>
+<p class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest mb-xs">Coach</p>
+<p class="font-body-lg text-body-lg">Stephen Fleming</p>
+</div>
+<div>
+<p class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest mb-xs">Est.</p>
+<p class="font-body-lg text-body-lg">2008</p>
+</div>
+</div>
+</div>
+</div>
+<!-- KPI Grid -->
+<div class="col-span-12 lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-lg">
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-on-surface-variant font-label-sm text-label-sm">TOTAL MATCHES</span>
+<span class="material-symbols-outlined text-on-surface-variant text-md">sports_cricket</span>
+</div>
+<div class="mt-md">
+<p class="font-display-lg text-display-lg font-label-md">248</p>
+<div class="h-12 w-full mt-sm flex items-end gap-[2px]">
+<div class="bg-secondary/20 w-full h-[60%]"></div>
+<div class="bg-secondary/20 w-full h-[40%]"></div>
+<div class="bg-secondary/20 w-full h-[80%]"></div>
+<div class="bg-secondary/20 w-full h-[50%]"></div>
+<div class="bg-secondary/20 w-full h-[90%]"></div>
+<div class="bg-secondary w-full h-[70%]"></div>
+</div>
+</div>
+</div>
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-on-surface-variant font-label-sm text-label-sm">WINS</span>
+<span class="material-symbols-outlined text-emerald-400 text-md" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="mt-md">
+<p class="font-display-lg text-display-lg font-label-md">142</p>
+<p class="text-emerald-400 text-label-sm mt-xs">+4 this season</p>
+</div>
+</div>
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-on-surface-variant font-label-sm text-label-sm">LOSSES</span>
+<span class="material-symbols-outlined text-error text-md">cancel</span>
+</div>
+<div class="mt-md">
+<p class="font-display-lg text-display-lg font-label-md">104</p>
+<p class="text-error text-label-sm mt-xs">-2 this season</p>
+</div>
+</div>
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-on-surface-variant font-label-sm text-label-sm">WIN %</span>
+<span class="material-symbols-outlined text-secondary text-md">analytics</span>
+</div>
+<div class="mt-md">
+<p class="font-display-lg text-display-lg font-label-md">58.3%</p>
+<div class="w-full h-1.5 bg-white/10 rounded-full mt-md overflow-hidden">
+<div class="bg-secondary h-full w-[58.3%]"></div>
+</div>
+</div>
+</div>
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between bg-secondary-container/20">
+<div class="flex justify-between items-start">
+<span class="text-on-secondary-container font-label-sm text-label-sm">CHAMPIONSHIPS</span>
+<span class="material-symbols-outlined text-tertiary text-md" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+</div>
+<div class="mt-md">
+<p class="font-display-lg text-display-lg font-label-md text-tertiary">5</p>
+<p class="text-on-secondary-container text-label-sm mt-xs">2010, '11, '18, '21, '23</p>
+</div>
+</div>
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between border-secondary/50">
+<div class="flex justify-between items-start">
+<span class="text-on-surface-variant font-label-sm text-label-sm">QUALIFICATIONS</span>
+<span class="material-symbols-outlined text-secondary text-md">trending_up</span>
+</div>
+<div class="mt-md">
+<p class="font-display-lg text-display-lg font-label-md">12/14</p>
+<p class="text-secondary text-label-sm mt-xs">Elite Consistency</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Visualizations Section -->
+<section class="grid grid-cols-12 gap-lg">
+<!-- Team Wins by Season (Bar) -->
+<div class="col-span-12 lg:col-span-8 glass-panel p-xl rounded-xl">
+<div class="flex justify-between items-center mb-xl">
+<h3 class="font-headline-md text-headline-md">Team Wins by Season</h3>
+<div class="flex gap-sm">
+<span class="flex items-center gap-xs text-label-sm"><span class="w-2 h-2 rounded-full bg-secondary"></span> Wins</span>
+<span class="flex items-center gap-xs text-label-sm"><span class="w-2 h-2 rounded-full bg-surface-variant"></span> Average</span>
+</div>
+</div>
+<div class="h-[300px] w-full flex items-end justify-between gap-md relative">
+<!-- Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between -z-10 pointer-events-none opacity-10">
+<div class="border-b border-white w-full"></div>
+<div class="border-b border-white w-full"></div>
+<div class="border-b border-white w-full"></div>
+<div class="border-b border-white w-full"></div>
+</div>
+<!-- Bar 1 -->
+<div class="group relative flex flex-col items-center flex-1 h-full justify-end">
+<div class="w-full bg-secondary/80 rounded-t-lg transition-all group-hover:bg-secondary h-[40%]"></div>
+<span class="text-[10px] text-on-surface-variant mt-sm">2018</span>
+</div>
+<div class="group relative flex flex-col items-center flex-1 h-full justify-end">
+<div class="w-full bg-secondary/80 rounded-t-lg transition-all group-hover:bg-secondary h-[65%]"></div>
+<span class="text-[10px] text-on-surface-variant mt-sm">2019</span>
+</div>
+<div class="group relative flex flex-col items-center flex-1 h-full justify-end">
+<div class="w-full bg-secondary/80 rounded-t-lg transition-all group-hover:bg-secondary h-[35%]"></div>
+<span class="text-[10px] text-on-surface-variant mt-sm">2020</span>
+</div>
+<div class="group relative flex flex-col items-center flex-1 h-full justify-end">
+<div class="w-full bg-secondary/80 rounded-t-lg transition-all group-hover:bg-secondary h-[75%]"></div>
+<span class="text-[10px] text-on-surface-variant mt-sm">2021</span>
+</div>
+<div class="group relative flex flex-col items-center flex-1 h-full justify-end">
+<div class="w-full bg-secondary/80 rounded-t-lg transition-all group-hover:bg-secondary h-[30%]"></div>
+<span class="text-[10px] text-on-surface-variant mt-sm">2022</span>
+</div>
+<div class="group relative flex flex-col items-center flex-1 h-full justify-end">
+<div class="w-full bg-secondary/80 rounded-t-lg transition-all group-hover:bg-secondary h-[85%]"></div>
+<span class="text-[10px] text-on-surface-variant mt-sm">2023</span>
+</div>
+<div class="group relative flex flex-col items-center flex-1 h-full justify-end">
+<div class="w-full bg-secondary rounded-t-lg shadow-[0_0_20px_rgba(211,187,255,0.4)] h-[55%] animate-pulse"></div>
+<span class="text-[10px] text-secondary font-bold mt-sm">2024*</span>
+</div>
+</div>
+</div>
+<!-- Toss Impact (Pie/Donut) -->
+<div class="col-span-12 lg:col-span-4 glass-panel p-xl rounded-xl flex flex-col">
+<h3 class="font-headline-md text-headline-md mb-xl">Toss Impact</h3>
+<div class="flex-1 flex flex-col items-center justify-center relative">
+<!-- SVG Donut Chart -->
+<svg class="w-48 h-48 -rotate-90" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="rgba(255,255,255,0.05)" stroke-width="12"></circle>
+<circle class="transition-all duration-1000" cx="50" cy="50" fill="transparent" r="40" stroke="var(--tw-color-secondary)" stroke-dasharray="251.2" stroke-dashoffset="85" stroke-width="12"></circle>
+<circle cx="50" cy="50" fill="transparent" r="40" stroke="#45464d" stroke-dasharray="251.2" stroke-dashoffset="200" stroke-width="12"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-display-lg text-[32px] leading-tight">66%</span>
+<span class="text-on-surface-variant text-[10px] uppercase tracking-widest">Win Ratio</span>
+</div>
+</div>
+<div class="mt-xl grid grid-cols-2 gap-md">
+<div class="flex items-center gap-sm">
+<div class="w-3 h-3 rounded-full bg-secondary"></div>
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant">Toss Win</span>
+<span class="font-label-md text-label-md">66%</span>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+<div class="flex flex-col">
+<span class="text-[10px] text-on-surface-variant">Toss Loss</span>
+<span class="font-label-md text-label-md">34%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Home vs Away Performance (Grouped Bar) -->
+<div class="col-span-12 lg:col-span-6 glass-panel p-xl rounded-xl">
+<h3 class="font-headline-md text-headline-md mb-xl">Venue Dominance</h3>
+<div class="flex flex-col gap-lg">
+<div class="space-y-sm">
+<div class="flex justify-between items-center">
+<span class="text-label-md font-label-md">HOME (CHIDAMBARAM)</span>
+<span class="text-emerald-400 font-label-md">72% Win Rate</span>
+</div>
+<div class="w-full h-8 bg-white/5 rounded-lg overflow-hidden flex">
+<div class="bg-secondary h-full w-[72%] flex items-center px-md text-[10px] font-bold">52 WINS</div>
+<div class="bg-surface-variant h-full w-[28%]"></div>
+</div>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center">
+<span class="text-label-md font-label-md">AWAY VENUES</span>
+<span class="text-secondary font-label-md">45% Win Rate</span>
+</div>
+<div class="w-full h-8 bg-white/5 rounded-lg overflow-hidden flex">
+<div class="bg-secondary/40 h-full w-[45%] flex items-center px-md text-[10px] font-bold">40 WINS</div>
+<div class="bg-surface-variant h-full w-[55%]"></div>
+</div>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center">
+<span class="text-label-md font-label-md">NEUTRAL VENUES</span>
+<span class="text-secondary font-label-md">55% Win Rate</span>
+</div>
+<div class="w-full h-8 bg-white/5 rounded-lg overflow-hidden flex">
+<div class="bg-secondary/60 h-full w-[55%] flex items-center px-md text-[10px] font-bold">50 WINS</div>
+<div class="bg-surface-variant h-full w-[45%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Run Rate Comparison (Spider/Radar Chart Concept) -->
+<div class="col-span-12 lg:col-span-6 glass-panel p-xl rounded-xl overflow-hidden relative">
+<h3 class="font-headline-md text-headline-md mb-xl">Performance Matrix</h3>
+<div class="relative w-full h-[240px] flex items-center justify-center">
+<!-- Simulated Radar Chart with CSS/SVG -->
+<svg class="w-56 h-56" viewbox="0 0 100 100">
+<!-- Background Polygons -->
+<polygon fill="none" points="50,10 90,40 75,90 25,90 10,40" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"></polygon>
+<polygon fill="none" points="50,25 80,48 68,80 32,80 20,48" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"></polygon>
+<polygon fill="none" points="50,40 70,55 62,70 38,70 30,55" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"></polygon>
+<!-- Data Polygon -->
+<polygon fill="rgba(211,187,255,0.3)" points="50,15 85,35 70,85 40,88 15,45" stroke="var(--tw-color-secondary)" stroke-width="1.5"></polygon>
+<!-- Dots -->
+<circle cx="50" cy="15" fill="var(--tw-color-secondary)" r="1.5"></circle>
+<circle cx="85" cy="35" fill="var(--tw-color-secondary)" r="1.5"></circle>
+<circle cx="70" cy="85" fill="var(--tw-color-secondary)" r="1.5"></circle>
+<circle cx="40" cy="88" fill="var(--tw-color-secondary)" r="1.5"></circle>
+<circle cx="15" cy="45" fill="var(--tw-color-secondary)" r="1.5"></circle>
+</svg>
+<!-- Axis Labels -->
+<span class="absolute top-0 text-[10px] text-on-surface-variant font-label-sm">RUN RATE</span>
+<span class="absolute right-0 top-1/3 text-[10px] text-on-surface-variant font-label-sm">WICKET %</span>
+<span class="absolute bottom-4 right-8 text-[10px] text-on-surface-variant font-label-sm">ECONOMY</span>
+<span class="absolute bottom-4 left-8 text-[10px] text-on-surface-variant font-label-sm">DOT BALL %</span>
+<span class="absolute left-0 top-1/3 text-[10px] text-on-surface-variant font-label-sm">BOUNDARIES</span>
+</div>
+<p class="text-center text-label-sm text-on-surface-variant mt-lg italic">Compared to League Average</p>
+</div>
+</section>
+<!-- Recent Match Table Section -->
+<section class="glass-panel rounded-xl overflow-hidden mb-xl">
+<div class="px-xl py-lg border-b border-white/5 flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md">Recent Performance History</h3>
+<button class="text-secondary font-label-sm text-label-sm hover:underline">VIEW ALL MATCHES</button>
+</div>
+<div class="overflow-x-auto no-scrollbar">
+<table class="w-full">
+<thead>
+<tr class="bg-white/5">
+<th class="px-xl py-md text-left font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Opponent</th>
+<th class="px-xl py-md text-left font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Result</th>
+<th class="px-xl py-md text-left font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Score</th>
+<th class="px-xl py-md text-left font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Top Performer</th>
+<th class="px-xl py-md text-left font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Venue</th>
+<th class="px-xl py-md text-right font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-xl py-lg flex items-center gap-md">
+<div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-bold">MI</div>
+<span class="font-body-md">Mumbai Indians</span>
+</td>
+<td class="px-xl py-lg">
+<span class="px-sm py-1 bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 rounded font-label-sm text-label-sm">WON BY 20 RUNS</span>
+</td>
+<td class="px-xl py-lg font-label-md">206/4 (20)</td>
+<td class="px-xl py-lg">
+<div class="flex flex-col">
+<span class="font-body-md">Shivam Dube</span>
+<span class="text-[10px] text-on-surface-variant">66* (38)</span>
+</div>
+</td>
+<td class="px-xl py-lg text-on-surface-variant">Wankhede Stadium</td>
+<td class="px-xl py-lg text-right">
+<button class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary">arrow_forward</button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-xl py-lg flex items-center gap-md">
+<div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-bold">GT</div>
+<span class="font-body-md">Gujarat Titans</span>
+</td>
+<td class="px-xl py-lg">
+<span class="px-sm py-1 bg-error/10 text-error border border-error/20 rounded font-label-sm text-label-sm">LOST BY 35 RUNS</span>
+</td>
+<td class="px-xl py-lg font-label-md">196/8 (20)</td>
+<td class="px-xl py-lg">
+<div class="flex flex-col">
+<span class="font-body-md">Daryl Mitchell</span>
+<span class="text-[10px] text-on-surface-variant">63 (34)</span>
+</div>
+</td>
+<td class="px-xl py-lg text-on-surface-variant">Narendra Modi Stadium</td>
+<td class="px-xl py-lg text-right">
+<button class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary">arrow_forward</button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-xl py-lg flex items-center gap-md">
+<div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-bold">LSG</div>
+<span class="font-body-md">Lucknow Super Giants</span>
+</td>
+<td class="px-xl py-lg">
+<span class="px-sm py-1 bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 rounded font-label-sm text-label-sm">WON BY 6 WICKETS</span>
+</td>
+<td class="px-xl py-lg font-label-md">176/4 (19.0)</td>
+<td class="px-xl py-lg">
+<div class="flex flex-col">
+<span class="font-body-md">Mustafizur Rahman</span>
+<span class="text-[10px] text-on-surface-variant">4/30 (4)</span>
+</div>
+</td>
+<td class="px-xl py-lg text-on-surface-variant">M. A. Chidambaram</td>
+<td class="px-xl py-lg text-right">
+<button class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary">arrow_forward</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<footer class="mt-xl py-xl border-t border-white/10 text-center">
+<div class="flex flex-col items-center gap-md">
+<div class="flex gap-lg font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">
+<a class="hover:text-primary" href="#">Data Integrity</a>
+<a class="hover:text-primary" href="#">API Docs</a>
+<a class="hover:text-primary" href="#">Privacy</a>
+<a class="hover:text-primary" href="#">Legal</a>
+</div>
+<p class="text-label-sm text-on-surface-variant/50">© 2024 IPL Analytics Elite Scouting Command. Real-time data powered by Global Sports Feed.</p>
+</div>
+</footer>
+<!-- Interactive Sparkline Script -->
+<script>
+    // --- 1. YOUR EXISTING VISUAL EFFECTS ---
+    document.querySelectorAll('.glass-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        const scroll = window.scrollY;
+        document.body.style.backgroundPosition = `center ${scroll * 0.2}px`;
+    });
+
+
+    // --- 2. NEW NAVIGATION & INTERACTION LOGIC ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const routes = [
+            '../tournament_overview/code.html', // Dashboard
+            '../team_analysis/code.html',       // Team Analysis
+            '../batting_analysis/code.html',    // Batting Analysis
+            '../bowling_analysis/code.html',    // Bowling Analysis
+            '../match_analysis/code.html',      // Match Analysis
+            '../player_comparison/code.html',   // Player Comparison
+            '../venue_analysis/code.html'       // Venue Analysis
+        ];
+
+        const sidebarLinks = document.querySelectorAll('nav.fixed.left-0 .flex-1 a');
+        sidebarLinks.forEach((link, index) => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                window.location.href = routes[index] || '#';
+            });
+        });
+
+        // Settings Link - FIXED PATH
+        const settingsLink = document.querySelector('nav.fixed.left-0 .mb-md a');
+        if (settingsLink) {
+            settingsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = '../settings/code.html'; 
+            });
+        }
+
+        const topNavLinks = document.querySelectorAll('header nav a');
+        topNavLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                topNavLinks.forEach(l => l.className = 'text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest');
+                link.className = 'text-primary font-bold border-b-2 border-primary pb-1 font-label-sm text-label-sm uppercase tracking-widest';
+            });
+        });
+
+        const ledgerButtons = document.querySelectorAll('.border-white\\/10.rounded-lg button');
+        ledgerButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                ledgerButtons.forEach(b => b.className = 'px-md py-sm hover:bg-white/5 text-on-surface-variant text-label-md transition-colors');
+                btn.className = 'px-md py-sm bg-white/10 text-on-surface text-label-md';
+            });
+        });
+
+        const pageButtons = document.querySelectorAll('.p-lg.border-t .flex.gap-sm button:not(:first-child):not(:last-child)');
+        pageButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                pageButtons.forEach(b => b.className = 'w-10 h-10 rounded border border-white/10 flex items-center justify-center hover:bg-white/5');
+                btn.className = 'w-10 h-10 rounded border border-secondary text-secondary flex items-center justify-center bg-secondary/10';
+            });
+        });
+
+        const currentUrl = window.location.href;
+document.querySelectorAll('nav.fixed.left-0 .flex-1 a').forEach(link => {
+    const href = link.getAttribute('href');
+    if (href !== '#' && currentUrl.includes(href.replace('../', ''))) {
+        link.className = "flex items-center p-md rounded-xl text-secondary-fixed-dim bg-secondary-container/30 border-l-4 border-secondary transition-all duration-200";
+        const icon = link.querySelector('.material-symbols-outlined');
+        if(icon) icon.style.fontVariationSettings = "'FILL' 1";
+    } else {
+        link.className = "flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200";
+        const icon = link.querySelector('.material-symbols-outlined');
+        if(icon) icon.style.fontVariationSettings = "'FILL' 0";
+    }
+});
+    });
+</script>
+</body></html>

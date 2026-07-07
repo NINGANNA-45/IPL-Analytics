@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Player Comparison | IPL Analytics Elite Scouting</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#353436",
+                        "secondary-container": "#592da2",
+                        "primary-fixed": "#dae2fd",
+                        "error": "#ffb4ab",
+                        "on-surface-variant": "#c6c6cd",
+                        "on-primary-container": "#798098",
+                        "on-secondary-container": "#c8aaff",
+                        "inverse-primary": "#565e74",
+                        "outline": "#909097",
+                        "surface-container-lowest": "#0e0e10",
+                        "surface-container-low": "#1b1b1d",
+                        "inverse-on-surface": "#303032",
+                        "on-tertiary-container": "#957d5a",
+                        "surface-tint": "#bec6e0",
+                        "on-secondary-fixed": "#260059",
+                        "tertiary-fixed": "#fcdeb5",
+                        "surface": "#131315",
+                        "surface-dim": "#131315",
+                        "on-tertiary-fixed-variant": "#574425",
+                        "surface-container": "#1f1f21",
+                        "surface-container-high": "#2a2a2b",
+                        "on-error-container": "#ffdad6",
+                        "on-primary": "#283044",
+                        "primary": "#bec6e0",
+                        "tertiary": "#dec29a",
+                        "on-background": "#e4e2e4",
+                        "outline-variant": "#45464d",
+                        "background": "#131315",
+                        "secondary-fixed": "#ebdcff",
+                        "on-surface": "#e4e2e4",
+                        "surface-bright": "#39393b",
+                        "on-primary-fixed": "#131b2e",
+                        "on-secondary": "#3f0689",
+                        "on-secondary-fixed-variant": "#572ba0",
+                        "secondary": "#d3bbff",
+                        "on-tertiary": "#3e2d11",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "secondary-fixed-dim": "#d3bbff",
+                        "tertiary-container": "#231500",
+                        "on-error": "#690005",
+                        "primary-fixed-dim": "#bec6e0",
+                        "surface-container-highest": "#353436",
+                        "primary-container": "#0f172a",
+                        "inverse-surface": "#e4e2e4",
+                        "on-tertiary-fixed": "#271901",
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#dec29a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "container-max": "1440px",
+                        "base": "4px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "sm": "8px",
+                        "xl": "40px",
+                        "gutter": "20px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["JetBrains Mono"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-sm": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-level-1 { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-level-2 { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(12px); border-top: 1px solid rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-level-3 { background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .player-a-accent { border-left: 4px solid #d3bbff; }
+        .player-b-accent { border-right: 4px solid #dec29a; }
+        .radar-grid { stroke: rgba(255,255,255,0.1); stroke-width: 1; fill: none; }
+        .radar-area-a { fill: rgba(211, 187, 255, 0.3); stroke: #d3bbff; stroke-width: 2; }
+        .radar-area-b { fill: rgba(222, 194, 154, 0.3); stroke: #dec29a; stroke-width: 2; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #353436; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-[#020617] text-on-surface font-body-md overflow-x-hidden">
+<!-- Top Navigation -->
+<header class="sticky top-0 w-full z-40 bg-surface/40 backdrop-blur-md border-b border-white/10 shadow-sm flex justify-between items-center px-xl h-20">
+<div class="flex items-center gap-xl">
+<h1 class="font-headline-md text-headline-md font-extrabold text-on-surface">IPL PLAYER COMPARISON</h1>
+<nav class="hidden md:flex gap-lg">
+<a class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors" href="#">All Seasons</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative flex items-center bg-surface-container/50 px-md py-xs rounded-full border border-white/5 focus-within:ring-1 focus-within:ring-primary/50 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-xs">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 text-on-surface" placeholder="Search Players..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">notifications</button>
+<div class="w-10 h-10 rounded-full bg-secondary-container/30 overflow-hidden border border-white/10">
+<img alt="Analyst Profile" class="w-full h-full object-cover" data-alt="Professional profile portrait of a data analyst with a confident expression, set against a dark, moody background with subtle lens flares and tech-inspired color grade. The lighting is low-key, emphasizing features with a cool blue and purple cinematic cast that matches the elite scouting theme." src="https://grabcad.com/screenshots/pics/d2004693a143f320680d7291ff371eab/large.png"/>
+</div>
+</div>
+</header>
+<!-- Side Navigation -->
+<nav class="fixed left-0 top-0 h-screen w-[80px] hover:w-[240px] transition-all duration-300 z-50 bg-surface/40 backdrop-blur-lg border-r border-white/10 shadow-2xl flex flex-col py-lg group">
+<div class="px-md mb-xl flex items-center overflow-hidden whitespace-nowrap">
+<div class="w-10 h-10 bg-secondary-container rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-secondary-container">sports_cricket</span>
+</div>
+<div class="ml-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">IPL Analytics</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">~By Ninganna</p>
+</div>
+</div>
+<div class="flex-1 space-y-sm px-sm overflow-hidden">
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../tournament_overview/code.html">
+<span class="material-symbols-outlined mr-md">dashboard</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../team_analysis/code.html">
+<span class="material-symbols-outlined mr-md">groups</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Team Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../batting_analysis/code.html">
+<span class="material-symbols-outlined mr-md">sports_cricket</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Batting Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-secondary-fixed-dim bg-secondary-container/30 border-l-4 border-secondary transition-all duration-200" href="../bowling_analysis/code.html">
+<span class="material-symbols-outlined mr-md" style="font-variation-settings: 'FILL' 1;">sports_baseball</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Bowling Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../match_analysis/code.html">
+<span class="material-symbols-outlined mr-md">analytics</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Match Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../player_comparison/code.html">
+<span class="material-symbols-outlined mr-md">compare_arrows</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Player Comparison</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../venue_analysis/code.html">
+<span class="material-symbols-outlined mr-md">stadium</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Venue Analysis</span>
+</a>
+</div>
+<div class="px-sm mb-md">
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../settings/code.html">
+<span class="material-symbols-outlined mr-md">settings</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="ml-[80px] p-xl max-w-[1440px] mx-auto min-h-screen">
+<!-- Selection Header -->
+<div class="grid grid-cols-12 gap-gutter mb-xl items-end relative">
+    <datalist id="players-list"></datalist>
+
+    <div class="col-span-12 lg:col-span-5">
+        <label class="block font-label-sm text-label-sm text-secondary uppercase mb-sm tracking-widest">Select Player 1</label>
+        <div class="glass-level-2 p-md rounded-xl flex items-center justify-between cursor-pointer focus-within:ring-2 focus-within:ring-secondary/50 transition-colors">
+            <input type="text" id="player1-input" list="players-list" placeholder="Search Player 1..." class="bg-transparent border-none text-on-surface font-headline-md font-bold w-full outline-none placeholder:text-white/20 focus:ring-0 px-0">
+        </div>
+    </div>
+
+    <div class="col-span-12 lg:col-span-2 flex flex-col items-center justify-center pb-md gap-sm">
+        <div class="w-16 h-16 rounded-full glass-level-3 border border-secondary/30 flex items-center justify-center shadow-[0_0_15px_rgba(211,187,255,0.2)]">
+            <span class="font-label-md text-secondary-fixed-dim text-xl font-bold italic">VS</span>
+        </div>
+        <select id="comparison-mode" class="bg-surface/80 border border-white/10 text-on-surface-variant text-[10px] uppercase tracking-widest rounded px-2 py-1 outline-none focus:border-secondary transition-colors cursor-pointer text-center w-full max-w-[140px]">
+            <option value="career">Bat vs Bat (Career)</option>
+            <option value="h2h">Bat vs Bowl (H2H)</option>
+            <option value="bowl_bowl">Bowl vs Bowl (Career)</option>
+        </select>
+    </div>
+
+    <div class="col-span-12 lg:col-span-5">
+        <label class="block font-label-sm text-label-sm text-tertiary uppercase mb-sm tracking-widest text-right">Select Player 2</label>
+        <div class="glass-level-2 p-md rounded-xl flex items-center justify-between cursor-pointer flex-row-reverse focus-within:ring-2 focus-within:ring-tertiary/50 transition-colors">
+            <input type="text" id="player2-input" list="players-list" placeholder="Search Player 2..." class="bg-transparent border-none text-on-surface font-headline-md font-bold w-full outline-none placeholder:text-white/20 focus:ring-0 text-right px-0">
+        </div>
+    </div>
+</div>
+<!-- Main Head-to-Head Cards -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-xl mb-xl">
+<!-- Player A Profile -->
+<!-- Player A Profile -->
+<div class="glass-level-2 rounded-2xl p-xl player-a-accent relative overflow-hidden group">
+    <div class="absolute -right-20 -top-20 w-80 h-80 bg-secondary/10 rounded-full blur-[100px] pointer-events-none"></div>
+    
+    <div class="absolute top-2 right-6 opacity-[0.05] pointer-events-none select-none">
+        <span id="p1-card-initials" class="text-[140px] leading-none font-display-lg font-black text-secondary tracking-tighter"></span>
+    </div>
+
+    <div class="relative z-10 flex flex-col h-full">
+        <div class="flex justify-between items-start">
+            <div class="space-y-sm">
+                <span class="px-sm py-1 bg-secondary/20 text-secondary text-[10px] font-bold rounded uppercase tracking-tighter">Batsman</span>
+                <h2 id="p1-card-name" class="font-display-lg text-4xl text-white font-extrabold uppercase"></h2>
+                <p id="p1-card-team" class="font-label-md text-secondary-fixed-dim uppercase tracking-wider text-xs font-bold"></p>
+            </div>
+        </div>
+        <div class="grid grid-cols-3 gap-md mt-16 mb-2">
+            <div class="glass-level-1 p-sm rounded-lg text-center">
+                <p class="text-[10px] text-on-surface-variant uppercase">Runs</p>
+                <p id="p1-card-runs" class="font-label-md text-xl font-bold text-secondary">0</p>
+            </div>
+            <div class="glass-level-1 p-sm rounded-lg text-center">
+                <p class="text-[10px] text-on-surface-variant uppercase">Avg</p>
+                <p id="p1-card-avg" class="font-label-md text-xl font-bold text-white">0.0</p>
+            </div>
+            <div class="glass-level-1 p-sm rounded-lg text-center">
+                <p class="text-[10px] text-on-surface-variant uppercase">SR</p>
+                <p id="p1-card-sr" class="font-label-md text-xl font-bold text-white">0.0</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Player B Profile -->
+<div class="glass-level-2 rounded-2xl p-xl player-b-accent relative overflow-hidden group">
+    <div class="absolute -left-20 -top-20 w-80 h-80 bg-tertiary/10 rounded-full blur-[100px] pointer-events-none"></div>
+    
+    <div class="absolute top-2 left-6 opacity-[0.05] pointer-events-none select-none">
+        <span id="p2-card-initials" class="text-[140px] leading-none font-display-lg font-black text-tertiary tracking-tighter"></span>
+    </div>
+
+    <div class="relative z-10 flex flex-col h-full">
+        <div class="flex justify-between items-start flex-row-reverse">
+            <div class="space-y-sm text-right">
+                <span class="px-sm py-1 bg-tertiary/20 text-tertiary text-[10px] font-bold rounded uppercase tracking-tighter">Batsman</span>
+                <h2 id="p2-card-name" class="font-display-lg text-4xl text-white font-extrabold uppercase"></h2>
+                <p id="p2-card-team" class="font-label-md text-tertiary-fixed-dim uppercase tracking-wider text-xs font-bold"></p>
+            </div>
+        </div>
+        <div class="grid grid-cols-3 gap-md mt-16 mb-2">
+            <div class="glass-level-1 p-sm rounded-lg text-center">
+                <p class="text-[10px] text-on-surface-variant uppercase">Runs</p>
+                <p id="p2-card-runs" class="font-label-md text-xl font-bold text-tertiary">0</p>
+            </div>
+            <div class="glass-level-1 p-sm rounded-lg text-center">
+                <p class="text-[10px] text-on-surface-variant uppercase">Avg</p>
+                <p id="p2-card-avg" class="font-label-md text-xl font-bold text-white">0.0</p>
+            </div>
+            <div class="glass-level-1 p-sm rounded-lg text-center">
+                <p class="text-[10px] text-on-surface-variant uppercase">SR</p>
+                <p id="p2-card-sr" class="font-label-md text-xl font-bold text-white">0.0</p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Analytics Bento Grid -->
+<div class="grid grid-cols-12 gap-xl">
+<!-- Radar Chart Section -->
+<div class="col-span-12 lg:col-span-5 glass-level-2 rounded-2xl p-lg h-[500px] flex flex-col">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-md text-lg text-white">Skill Topology</h3>
+<div class="flex gap-md">
+<div class="flex items-center gap-xs">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="text-[10px] uppercase text-on-surface-variant">Asset A</span>
+</div>
+<div class="flex items-center gap-xs">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="text-[10px] uppercase text-on-surface-variant">Asset B</span>
+</div>
+</div>
+</div>
+<div class="flex-1 flex items-center justify-center relative">
+<!-- Simple SVG Radar Chart -->
+<svg class="w-full h-full max-h-[350px]" viewbox="0 0 200 200">
+<!-- Pentagons -->
+<polygon class="radar-grid" points="100,20 176,75 147,165 53,165 24,75"></polygon>
+<polygon class="radar-grid" points="100,45 152,83 133,143 67,143 48,83"></polygon>
+<polygon class="radar-grid" points="100,70 128,91 119,122 81,122 72,91"></polygon>
+<!-- Axis Labels (Manual Positioning) -->
+<text class="font-label-sm" fill="#c6c6cd" font-size="6" text-anchor="middle" x="100" y="15">POWER</text>
+<text class="font-label-sm" fill="#c6c6cd" font-size="6" text-anchor="start" x="185" y="75">CONSISTENCY</text>
+<text class="font-label-sm" fill="#c6c6cd" font-size="6" text-anchor="middle" x="147" y="175">PACE</text>
+<text class="font-label-sm" fill="#c6c6cd" font-size="6" text-anchor="middle" x="53" y="175">SPIN</text>
+<text class="font-label-sm" fill="#c6c6cd" font-size="6" text-anchor="end" x="15" y="75">TECHNIQUE</text>
+<!-- Data Area A -->
+<polygon class="radar-area-a" points="100,30 160,80 140,150 70,140 30,80"></polygon>
+<!-- Data Area B -->
+<polygon class="radar-area-b" points="100,40 140,90 120,160 80,150 40,70"></polygon>
+</svg>
+</div>
+</div>
+<!-- Side-by-Side Comparison Metrics -->
+<div id="comparison-metrics-container" class="col-span-12 lg:col-span-7 space-y-md">
+</div>
+</div>
+<!-- Performance Trends & Head-to-Head Section -->
+<div class="grid grid-cols-12 gap-xl mt-xl">
+<!-- Season Trends -->
+<div class="col-span-12 lg:col-span-8 glass-level-2 rounded-2xl p-lg">
+    <div class="flex justify-between items-center mb-lg">
+        <h3 class="font-headline-md text-lg text-white">Season Accumulation Trend</h3>
+        <div class="flex gap-sm">
+            <button id="toggle-runs-btn" class="px-sm py-1 rounded bg-secondary-container/20 text-secondary text-xs border border-secondary/20 transition-colors">Runs</button>
+            <button id="toggle-sixes-btn" class="px-sm py-1 rounded hover:bg-white/5 text-on-surface-variant text-xs border border-transparent transition-colors">6's</button>
+        </div>
+    </div>
+    <div class="relative h-[250px] w-full">
+        <canvas id="comparisonChart"></canvas>
+    </div>
+</div>
+<!-- Head-to-Head -->
+<div class="col-span-12 lg:col-span-4 glass-level-2 rounded-2xl p-lg flex flex-col">
+<h3 class="font-headline-md text-lg text-white mb-lg">Direct Encounters</h3>
+<div class="flex-1 flex flex-col justify-center items-center text-center space-y-md">
+<div class="w-24 h-24 rounded-full bg-surface-container flex items-center justify-center border border-white/10 group relative">
+<span class="material-symbols-outlined text-on-surface-variant text-4xl group-hover:scale-110 transition-transform">history</span>
+<div class="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-surface animate-pulse"></div>
+</div>
+<div>
+<p class="font-headline-md text-base text-white">Live History</p>
+<p class="text-sm text-on-surface-variant max-w-[200px]">Click Below Button to View Live Ongoing Matches</p>
+</div>
+<button class="w-full py-md bg-secondary text-on-secondary font-label-md font-bold rounded-lg hover:brightness-110 transition-all flex items-center justify-center gap-md" onclick="window.open('https://www.cricbuzz.com', '_blank')">
+                        VIEW DETAILED LOGS
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<footer class="mt-xl py-xl border-t border-white/10 text-center">
+<div class="flex flex-col items-center gap-md">
+<div class="flex gap-lg font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">
+<a class="hover:text-primary" href="#">Data Integrity</a>
+<a class="hover:text-primary" href="#">API Docs</a>
+<a class="hover:text-primary" href="#">Privacy</a>
+<a class="hover:text-primary" href="#">Legal</a>
+</div>
+<p class="text-label-sm text-on-surface-variant/50">© 2024 IPL Analytics Elite Scouting Command. Real-time data powered by Global Sports Feed.</p>
+</div>
+</footer>
+</main>
+<!-- Visual Polish: Pulse Indicators -->
+<div class="fixed bottom-xl right-xl z-50">
+<div class="flex items-center gap-sm glass-level-3 px-md py-sm rounded-full border border-emerald-500/30">
+<div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+<span class="text-[10px] uppercase font-label-sm tracking-widest text-emerald-500">Comparison Is Thief of Joy</span>
+</div>
+</div>
+<!-- Background Elements -->
+<div class="fixed inset-0 -z-10 pointer-events-none opacity-20">
+<div class="absolute top-0 right-0 w-[600px] h-[600px] bg-secondary-container rounded-full blur-[150px]"></div>
+<div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-tertiary-container rounded-full blur-[120px]"></div>
+</div>
+<script>
+    document.querySelectorAll('.glass-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        const scroll = window.scrollY;
+        document.body.style.backgroundPosition = `center ${scroll * 0.2}px`;
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const routes = [
+            '../tournament_overview/code.html',
+            '../team_analysis/code.html',
+            '../batting_analysis/code.html',
+            '../bowling_analysis/code.html',
+            '../match_analysis/code.html',
+            '../player_comparison/code.html',
+            '../venue_analysis/code.html'
+        ];
+
+        document.querySelectorAll('nav.fixed.left-0 .flex-1 a').forEach((link, index) => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                window.location.href = routes[index] || '#';
+            });
+        });
+
+        const settingsLink = document.querySelector('nav.fixed.left-0 .mb-md a');
+        if (settingsLink) {
+            settingsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = '../settings/code.html'; 
+            });
+        }
+
+        const topNavLinks = document.querySelectorAll('header nav a');
+        topNavLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                topNavLinks.forEach(l => l.className = 'text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest');
+                link.className = 'text-primary font-bold border-b-2 border-primary pb-1 font-label-sm text-label-sm uppercase tracking-widest';
+            });
+        });
+
+        const currentUrl = window.location.href;
+        document.querySelectorAll('nav.fixed.left-0 .flex-1 a').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href !== '#' && currentUrl.includes(href.replace('../', ''))) {
+                link.className = "flex items-center p-md rounded-xl text-secondary-fixed-dim bg-secondary-container/30 border-l-4 border-secondary transition-all duration-200";
+                const icon = link.querySelector('.material-symbols-outlined');
+                if(icon) icon.style.fontVariationSettings = "'FILL' 1";
+            } else {
+                link.className = "flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200";
+                const icon = link.querySelector('.material-symbols-outlined');
+                if(icon) icon.style.fontVariationSettings = "'FILL' 0";
+            }
+        });
+
+        let allDeliveries = [];
+        let matchToSeason = {};
+        let uniquePlayers = new Set();
+        let comparisonChartInstance = null;
+        let currentChartMetric = 'Runs';
+
+        const p1Input = document.getElementById('player1-input');
+        const p2Input = document.getElementById('player2-input');
+        const modeSelect = document.getElementById('comparison-mode');
+        const metricsContainer = document.getElementById('comparison-metrics-container');
+        const dataList = document.getElementById('players-list');
+        const btnRuns = document.getElementById('toggle-runs-btn');
+        const btnSixes = document.getElementById('toggle-sixes-btn');
+
+        if (!p1Input || !p2Input || !metricsContainer) return;
+
+        Papa.parse("../../backend/data/matches.csv", {
+            download: true,
+            header: true,
+            complete: function(matchResults) {
+                matchResults.data.forEach(row => {
+                    const id = row.id || row.match_id;
+                    const season = row.season || row.Season;
+                    if (id && season) {
+                        matchToSeason[String(id).trim()] = String(season).trim();
+                    }
+                });
+
+                Papa.parse("../../backend/data/deliveries.csv", {
+                    download: true,
+                    header: true,
+                    complete: function(deliveryResults) {
+                        allDeliveries = deliveryResults.data;
+                        
+                        allDeliveries.forEach(row => {
+                            const batName = row.batsman || row.batter;
+                            const bowlName = row.bowler;
+                            if (batName) uniquePlayers.add(batName.trim());
+                            if (bowlName) uniquePlayers.add(bowlName.trim());
+                        });
+
+                        if (dataList) {
+                            [...uniquePlayers].sort().forEach(player => {
+                                dataList.insertAdjacentHTML('beforeend', `<option value="${player}">`);
+                            });
+                        }
+
+                        p1Input.addEventListener('change', updateComparison);
+                        p2Input.addEventListener('change', updateComparison);
+                        if (modeSelect) {
+                            modeSelect.addEventListener('change', () => {
+                                const mode = modeSelect.value;
+                                currentChartMetric = mode === 'bowl_bowl' ? 'Wickets' : 'Runs';
+                                if(btnRuns) btnRuns.className = 'px-sm py-1 rounded bg-secondary-container/20 text-secondary text-xs border border-secondary/20 transition-colors';
+                                if(btnSixes) btnSixes.className = 'px-sm py-1 rounded hover:bg-white/5 text-on-surface-variant text-xs border border-transparent transition-colors';
+                                updateComparison();
+                            });
+                        }
+                        
+                        const hasKohli = [...uniquePlayers].find(p => p.includes("Kohli"));
+                        const hasDhoni = [...uniquePlayers].find(p => p.includes("Dhoni"));
+                        
+                        p1Input.value = hasKohli || [...uniquePlayers][0] || "";
+                        p2Input.value = hasDhoni || [...uniquePlayers][1] || "";
+                        if (modeSelect) modeSelect.value = "career";
+                        
+                        updateComparison();
+                    }
+                });
+            }
+        });
+
+        if (btnRuns && btnSixes) {
+            btnRuns.addEventListener('click', () => {
+                const mode = modeSelect ? modeSelect.value : 'career';
+                currentChartMetric = mode === 'bowl_bowl' ? 'Wickets' : 'Runs';
+                btnRuns.className = 'px-sm py-1 rounded bg-secondary-container/20 text-secondary text-xs border border-secondary/20 transition-colors';
+                btnSixes.className = 'px-sm py-1 rounded hover:bg-white/5 text-on-surface-variant text-xs border border-transparent transition-colors';
+                updateComparison();
+            });
+
+            btnSixes.addEventListener('click', () => {
+                const mode = modeSelect ? modeSelect.value : 'career';
+                currentChartMetric = mode === 'bowl_bowl' ? 'Economy' : '6s';
+                btnSixes.className = 'px-sm py-1 rounded bg-secondary-container/20 text-secondary text-xs border border-secondary/20 transition-colors';
+                btnRuns.className = 'px-sm py-1 rounded hover:bg-white/5 text-on-surface-variant text-xs border border-transparent transition-colors';
+                updateComparison();
+            });
+        }
+
+        const logsBtn = Array.from(document.querySelectorAll('button')).find(el => el.textContent.trim().toLowerCase().includes('view detailed logs'));
+        if (logsBtn) {
+            logsBtn.addEventListener('click', () => window.open('https://www.cricbuzz.com', '_blank'));
+        }
+
+        function getPlayerTeam(deliveries, playerName) {
+            let teams = {};
+            deliveries.forEach(d => {
+                const batName = (d.batsman || d.batter || "").trim();
+                const bowlName = (d.bowler || "").trim();
+                
+                if (batName === playerName) {
+                    const team = (d.batting_team || "").trim();
+                    if (team) teams[team] = (teams[team] || 0) + 1;
+                } else if (bowlName === playerName) {
+                    const team = (d.bowling_team || "").trim();
+                    if (team) teams[team] = (teams[team] || 0) + 1;
+                }
+            });
+            let maxCount = 0;
+            let bestTeam = "Unknown Team";
+            for (const team in teams) {
+                if (teams[team] > maxCount) {
+                    maxCount = teams[team];
+                    bestTeam = team;
+                }
+            }
+            return bestTeam;
+        }
+
+        function getInitials(name) {
+            const parts = name.trim().split(/[\s\.]+/).filter(Boolean);
+            if (parts.length === 0) return "";
+            if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+
+        // --- Core Calculation Engines ---
+        function calcStats(deliveries, targetBatsman) {
+            let runs = 0, balls = 0, fours = 0, sixes = 0, outs = 0;
+            let matchRuns = {};
+
+            deliveries.forEach(d => {
+                const batName = (d.batsman || d.batter || "").trim();
+                if (batName !== targetBatsman) return; 
+
+                const batsRuns = parseInt(d.batsman_runs || d.batter_runs, 10) || 0;
+                let isWide = parseInt(d.wide_runs, 10) > 0 || parseInt(d.is_wides, 10) > 0 || d.extras_type === 'wides';
+                
+                runs += batsRuns;
+                if (!isWide) balls += 1;
+                if (batsRuns === 4) fours += 1;
+                if (batsRuns === 6) sixes += 1;
+                
+                const playerOut = (d.player_dismissed || d.dismissed_player || "").trim();
+                if (playerOut === targetBatsman) outs += 1;
+
+                const matchId = String(d.match_id || d.id).trim();
+                if(matchId) matchRuns[matchId] = (matchRuns[matchId] || 0) + batsRuns;
+            });
+
+            let fifties = 0, hundreds = 0;
+            Object.values(matchRuns).forEach(r => {
+                if (r >= 100) hundreds += 1;
+                else if (r >= 50) fifties += 1;
+            });
+
+            const sr = balls > 0 ? (runs / balls) * 100 : 0;
+            const avg = outs > 0 ? (runs / outs) : runs;
+
+            return { runs, balls, fours, sixes, outs, sr, avg, fifties, hundreds };
+        }
+
+        function calcBowlStats(deliveries, targetBowler) {
+            let runsConceded = 0, legalBalls = 0, wickets = 0, sixes = 0, fours = 0;
+            let matchWickets = {};
+
+            deliveries.forEach(d => {
+                const bowlName = (d.bowler || "").toString().trim();
+                if (bowlName !== targetBowler) return;
+
+                const batsRuns = parseInt(d.batsman_runs || d.batter_runs, 10) || 0;
+                const wideRuns = parseInt(d.wide_runs || d.is_wides, 10) || 0;
+                const noBallRuns = parseInt(d.noball_runs || d.is_noball, 10) || 0;
+                
+                runsConceded += batsRuns + wideRuns + noBallRuns;
+                
+                if (batsRuns === 4) fours += 1;
+                if (batsRuns === 6) sixes += 1;
+                if (wideRuns === 0 && noBallRuns === 0) legalBalls += 1;
+
+                const playerOut = (d.player_dismissed || d.dismissed_player || "").toString().trim();
+                const kind = (d.dismissal_kind || "").toString().trim().toLowerCase();
+                
+                // Bulletproof check to avoid counting empty rows or "NaN"/"NA" as wickets
+                if (playerOut && playerOut !== "0" && playerOut !== "NaN" && playerOut !== "NA") {
+                    if (kind !== "run out" && kind !== "retired hurt" && kind !== "obstructing the field") {
+                        wickets += 1;
+                        const matchId = String(d.match_id || d.id).trim();
+                        matchWickets[matchId] = (matchWickets[matchId] || 0) + 1;
+                    }
+                }
+            });
+
+            let fourWHauls = 0;
+            Object.values(matchWickets).forEach(w => {
+                if (w >= 4) fourWHauls += 1;
+            });
+
+            const overs = legalBalls / 6;
+            const economy = overs > 0 ? (runsConceded / overs) : 0;
+            const average = wickets > 0 ? (runsConceded / wickets) : 0;
+
+            return { legalBalls, wickets, economy, fourWHauls, average, sixes, fours };
+        }
+
+        function updateComparison() {
+            const p1 = p1Input.value.trim();
+            const p2 = p2Input.value.trim();
+            const mode = modeSelect ? modeSelect.value : 'career';
+
+            if (!p1 || !p2) return; 
+            
+            const isBowl = mode === 'bowl_bowl';
+
+            // Update UI toggle button names based on mode
+            if (btnRuns && btnSixes) {
+                btnRuns.textContent = isBowl ? 'WICKETS' : 'RUNS';
+                btnSixes.textContent = isBowl ? 'ECONOMY' : '6S';
+            }
+
+            const p1Stats = isBowl ? calcBowlStats(allDeliveries, p1) : calcStats(allDeliveries, p1);
+            const p2Stats = isBowl ? calcBowlStats(allDeliveries, p2) : calcStats(allDeliveries, p2);
+
+            // Update Badge Labels (Batsman -> Bowler)
+            document.querySelectorAll('.px-sm.py-1.bg-secondary\\/20, .px-sm.py-1.bg-tertiary\\/20').forEach(badge => {
+                if (badge.textContent.includes('BATSMAN') || badge.textContent.includes('BOWLER')) {
+                    badge.textContent = isBowl ? 'BOWLER' : 'BATSMAN';
+                }
+            });
+
+            // Update P1 Profile Card
+            const p1NameEl = document.getElementById('p1-card-name');
+            if (p1NameEl) p1NameEl.textContent = p1.split(' ').pop().toUpperCase();
+            const p1TeamEl = document.getElementById('p1-card-team');
+            if (p1TeamEl) p1TeamEl.textContent = getPlayerTeam(allDeliveries, p1);
+            const p1InitialsEl = document.getElementById('p1-card-initials');
+            if (p1InitialsEl) p1InitialsEl.textContent = getInitials(p1);
+
+            const p1RunsEl = document.getElementById('p1-card-runs');
+            if (p1RunsEl) {
+                p1RunsEl.previousElementSibling.textContent = isBowl ? 'WICKETS' : 'RUNS';
+                p1RunsEl.textContent = isBowl ? p1Stats.wickets.toLocaleString() : p1Stats.runs.toLocaleString();
+            }
+            const p1AvgEl = document.getElementById('p1-card-avg');
+            if (p1AvgEl) {
+                p1AvgEl.textContent = isBowl ? (p1Stats.average || 0).toFixed(1) : p1Stats.avg.toFixed(1);
+            }
+            const p1SrEl = document.getElementById('p1-card-sr');
+            if (p1SrEl) {
+                p1SrEl.previousElementSibling.textContent = isBowl ? 'ECON' : 'SR';
+                p1SrEl.textContent = isBowl ? (p1Stats.economy || 0).toFixed(1) : p1Stats.sr.toFixed(1);
+            }
+
+            // Update P2 Profile Card
+            const p2NameEl = document.getElementById('p2-card-name');
+            if (p2NameEl) p2NameEl.textContent = p2.split(' ').pop().toUpperCase();
+            const p2TeamEl = document.getElementById('p2-card-team');
+            if (p2TeamEl) p2TeamEl.textContent = getPlayerTeam(allDeliveries, p2);
+            const p2InitialsEl = document.getElementById('p2-card-initials');
+            if (p2InitialsEl) p2InitialsEl.textContent = getInitials(p2);
+
+            const p2RunsEl = document.getElementById('p2-card-runs');
+            if (p2RunsEl) {
+                p2RunsEl.previousElementSibling.textContent = isBowl ? 'WICKETS' : 'RUNS';
+                p2RunsEl.textContent = isBowl ? p2Stats.wickets.toLocaleString() : p2Stats.runs.toLocaleString();
+            }
+            const p2AvgEl = document.getElementById('p2-card-avg');
+            if (p2AvgEl) {
+                p2AvgEl.textContent = isBowl ? (p2Stats.average || 0).toFixed(1) : p2Stats.avg.toFixed(1);
+            }
+            const p2SrEl = document.getElementById('p2-card-sr');
+            if (p2SrEl) {
+                p2SrEl.previousElementSibling.textContent = isBowl ? 'ECON' : 'SR';
+                p2SrEl.textContent = isBowl ? (p2Stats.economy || 0).toFixed(1) : p2Stats.sr.toFixed(1);
+            }
+
+            if (mode === 'career') {
+                renderCareerMetrics(p1, p2);
+            } else if (mode === 'h2h') {
+                renderHeadToHeadMetrics(p1, p2);
+            } else if (mode === 'bowl_bowl') {
+                renderBowlVsBowlMetrics(p1Stats, p2Stats);
+            }
+
+            renderChart(p1, p2, mode);
+        }
+
+        function drawBars(metrics) {
+            if(!metricsContainer) return;
+            metricsContainer.innerHTML = '';
+            metrics.forEach(m => {
+                const val1 = parseFloat(m.v1) || 0;
+                const val2 = parseFloat(m.v2) || 0;
+                const maxVal = m.max || Math.max(val1, val2) || 1; 
+                
+                const p1Width = Math.min((val1 / maxVal) * 100, 100) + '%';
+                const p2Width = Math.min((val2 / maxVal) * 100, 100) + '%';
+                
+                metricsContainer.insertAdjacentHTML('beforeend', `
+                    <div class="glass-level-2 rounded-xl p-md">
+                        <div class="flex justify-between items-center mb-sm px-md">
+                            <span class="text-secondary font-label-md font-bold">${m.v1}</span>
+                            <span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-label-sm">${m.label}</span>
+                            <span class="text-tertiary font-label-md font-bold">${m.v2}</span>
+                        </div>
+                        <div class="h-2 w-full bg-surface-container rounded-full flex overflow-hidden">
+                            <div class="h-full bg-secondary transition-all duration-700 ease-out" style="width: ${p1Width};"></div>
+                            <div class="h-full bg-transparent flex-1"></div>
+                            <div class="h-full bg-tertiary transition-all duration-700 ease-out" style="width: ${p2Width};"></div>
+                        </div>
+                    </div>
+                `);
+            });
+        }
+
+        function renderCareerMetrics(p1, p2) {
+            const p1Stats = calcStats(allDeliveries, p1);
+            const p2Stats = calcStats(allDeliveries, p2);
+
+            drawBars([
+                { label: 'STRIKE RATE', v1: p1Stats.sr.toFixed(1), v2: p2Stats.sr.toFixed(1), max: 200 },
+                { label: '(100S)', v1: p1Stats.hundreds, v2: p2Stats.hundreds, max: Math.max(p1Stats.hundreds, p2Stats.hundreds, 10) },
+                { label: 'AVERAGE', v1: p1Stats.avg.toFixed(1), v2: p2Stats.avg.toFixed(1), max: 60 },
+                { label: '(50S)', v1: p1Stats.fifties, v2: p2Stats.fifties, max: Math.max(p1Stats.fifties, p2Stats.fifties, 50) },
+                { label: "4'S", v1: p1Stats.fours, v2: p2Stats.fours, max: Math.max(p1Stats.fours, p2Stats.fours, 500) },
+                { label: "6'S", v1: p1Stats.sixes, v2: p2Stats.sixes, max: Math.max(p1Stats.sixes, p2Stats.sixes, 300) }
+            ]);
+        }
+
+        function renderHeadToHeadMetrics(p1, p2) {
+            const getH2h = (bat, bowl) => allDeliveries.filter(d => (d.batsman || d.batter || "").trim() === bat && (d.bowler || "").trim() === bowl);
+            const p1VsP2Stats = calcStats(getH2h(p1, p2), p1);
+            const p2VsP1Stats = calcStats(getH2h(p2, p1), p2);
+
+            drawBars([
+                { label: 'TOTAL RUNS', v1: p1VsP2Stats.runs, v2: p2VsP1Stats.runs, max: Math.max(p1VsP2Stats.runs, p2VsP1Stats.runs, 50) },
+                { label: 'STRIKE RATE', v1: p1VsP2Stats.sr.toFixed(1), v2: p2VsP1Stats.sr.toFixed(1), max: 250 },
+                { label: "4'S", v1: p1VsP2Stats.fours, v2: p2VsP1Stats.fours, max: Math.max(p1VsP2Stats.fours, p2VsP1Stats.fours, 20) },
+                { label: "6'S", v1: p1VsP2Stats.sixes, v2: p2VsP1Stats.sixes, max: Math.max(p1VsP2Stats.sixes, p2VsP1Stats.sixes, 10) },
+                { label: 'BALLS FACED', v1: p1VsP2Stats.balls, v2: p2VsP1Stats.balls, max: Math.max(p1VsP2Stats.balls, p2VsP1Stats.balls, 100) },
+                { label: 'OUTS', v1: p1VsP2Stats.outs, v2: p2VsP1Stats.outs, max: Math.max(p1VsP2Stats.outs, p2VsP1Stats.outs, 5) }
+            ]);
+        }
+
+        function renderBowlVsBowlMetrics(p1Stats, p2Stats) {
+            drawBars([
+                { label: 'BALLS BOWLED', v1: p1Stats.legalBalls, v2: p2Stats.legalBalls, max: Math.max(p1Stats.legalBalls, p2Stats.legalBalls, 3500) },
+                { label: 'WICKETS', v1: p1Stats.wickets, v2: p2Stats.wickets, max: Math.max(p1Stats.wickets, p2Stats.wickets, 200) },
+                { label: 'ECONOMY', v1: p1Stats.economy.toFixed(2), v2: p2Stats.economy.toFixed(2), max: 12 },
+                { label: 'AVERAGE', v1: p1Stats.average.toFixed(2), v2: p2Stats.average.toFixed(2), max: 50 },
+                { label: '4W HAULS', v1: p1Stats.fourWHauls, v2: p2Stats.fourWHauls, max: Math.max(p1Stats.fourWHauls, p2Stats.fourWHauls, 10) },
+                { label: "6'S CONCEDED", v1: p1Stats.sixes, v2: p2Stats.sixes, max: Math.max(p1Stats.sixes, p2Stats.sixes, 200) }
+            ]);
+        }
+
+        function renderChart(p1, p2, mode) {
+            const ctx = document.getElementById('comparisonChart');
+            if (!ctx) return;
+
+            const allSeasons = [...new Set(Object.values(matchToSeason))].filter(s => s).sort();
+            const p1Data = [];
+            const p2Data = [];
+
+            allSeasons.forEach(season => {
+                let p1Val = 0, p2Val = 0;
+                let p1Wickets = 0, p2Wickets = 0;
+                let p1RunsConc = 0, p2RunsConc = 0;
+                let p1LegalBalls = 0, p2LegalBalls = 0;
+                
+                allDeliveries.forEach(d => {
+                    const matchId = String(d.match_id || d.id).trim();
+                    if (matchToSeason[matchId] === String(season)) {
+                        const batName = (d.batsman || d.batter || "").trim();
+                        const bowlName = (d.bowler || "").toString().trim();
+                        const runs = parseInt(d.batsman_runs || d.batter_runs, 10) || 0;
+                        
+                        if (mode === 'career') {
+                            if (currentChartMetric === 'Runs') {
+                                if (batName === p1) p1Val += runs;
+                                if (batName === p2) p2Val += runs;
+                            } else {
+                                if (batName === p1 && runs === 6) p1Val += 1;
+                                if (batName === p2 && runs === 6) p2Val += 1;
+                            }
+                        } else if (mode === 'h2h') {
+                            if (currentChartMetric === 'Runs') {
+                                if (batName === p1 && bowlName === p2) p1Val += runs;
+                                if (batName === p2 && bowlName === p1) p2Val += runs;
+                            } else {
+                                if (batName === p1 && bowlName === p2 && runs === 6) p1Val += 1;
+                                if (batName === p2 && bowlName === p1 && runs === 6) p2Val += 1;
+                            }
+                        } else if (mode === 'bowl_bowl') {
+                            const wideRuns = parseInt(d.wide_runs || d.is_wides, 10) || 0;
+                            const noBallRuns = parseInt(d.noball_runs || d.is_noball, 10) || 0;
+                            const runsConc = runs + wideRuns + noBallRuns;
+                            const isLegal = (wideRuns === 0 && noBallRuns === 0);
+                            
+                            let isWicket = false;
+                            const playerOut = (d.player_dismissed || d.dismissed_player || "").toString().trim();
+                            const kind = (d.dismissal_kind || "").toString().trim().toLowerCase();
+                            
+                            // Safe wicket validation
+                            if (playerOut && playerOut !== "0" && playerOut !== "NaN" && playerOut !== "NA") {
+                                if (kind !== "run out" && kind !== "retired hurt" && kind !== "obstructing the field") {
+                                    isWicket = true;
+                                }
+                            }
+
+                            if (bowlName === p1) {
+                                p1RunsConc += runsConc;
+                                if (isLegal) p1LegalBalls++;
+                                if (isWicket) p1Wickets++;
+                            }
+                            if (bowlName === p2) {
+                                p2RunsConc += runsConc;
+                                if (isLegal) p2LegalBalls++;
+                                if (isWicket) p2Wickets++;
+                            }
+                        }
+                    }
+                });
+                
+                if (mode === 'bowl_bowl') {
+                    if (currentChartMetric === 'Wickets') {
+                        p1Val = p1Wickets;
+                        p2Val = p2Wickets;
+                    } else if (currentChartMetric === 'Economy') {
+                        p1Val = p1LegalBalls > 0 ? (p1RunsConc / (p1LegalBalls / 6)) : 0;
+                        p2Val = p2LegalBalls > 0 ? (p2RunsConc / (p2LegalBalls / 6)) : 0;
+                        p1Val = parseFloat(p1Val.toFixed(2));
+                        p2Val = parseFloat(p2Val.toFixed(2));
+                    }
+                }
+                
+                p1Data.push(p1Val); 
+                p2Data.push(p2Val);
+            });
+
+            if (comparisonChartInstance) {
+                comparisonChartInstance.data.labels = allSeasons;
+                comparisonChartInstance.data.datasets[0].label = p1;
+                comparisonChartInstance.data.datasets[0].data = p1Data;
+                comparisonChartInstance.data.datasets[1].label = p2;
+                comparisonChartInstance.data.datasets[1].data = p2Data;
+                comparisonChartInstance.update();
+            } else {
+                comparisonChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: allSeasons,
+                        datasets: [
+                            { label: p1, data: p1Data, backgroundColor: '#d3bbff', borderRadius: 4, barPercentage: 0.8 },
+                            { label: p2, data: p2Data, backgroundColor: '#dec29a', borderRadius: 4, barPercentage: 0.8 }
+                        ]
+                    },
+                    options: {
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#c6c6cd', font: {family: 'JetBrains Mono'} } },
+                            x: { grid: { display: false }, ticks: { color: '#c6c6cd', font: {family: 'JetBrains Mono'}, maxRotation: 45, minRotation: 45 } }
+                        },
+                        plugins: { legend: { labels: { color: '#e4e2e4', font: {family: 'JetBrains Mono'} } } }
+                    }
+                });
+            }
+        }
+    });
+</script>
+</body></html>

@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IPL Analytics | Batting Analysis Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-variant": "#353436",
+                      "secondary-container": "#592da2",
+                      "primary-fixed": "#dae2fd",
+                      "error": "#ffb4ab",
+                      "on-surface-variant": "#c6c6cd",
+                      "on-primary-container": "#798098",
+                      "on-secondary-container": "#c8aaff",
+                      "inverse-primary": "#565e74",
+                      "outline": "#909097",
+                      "surface-container-lowest": "#0e0e10",
+                      "surface-container-low": "#1b1b1d",
+                      "inverse-on-surface": "#303032",
+                      "on-tertiary-container": "#957d5a",
+                      "surface-tint": "#bec6e0",
+                      "on-secondary-fixed": "#260059",
+                      "tertiary-fixed": "#fcdeb5",
+                      "surface": "#131315",
+                      "surface-dim": "#131315",
+                      "on-tertiary-fixed-variant": "#574425",
+                      "surface-container": "#1f1f21",
+                      "surface-container-high": "#2a2a2b",
+                      "on-error-container": "#ffdad6",
+                      "on-primary": "#283044",
+                      "primary": "#bec6e0",
+                      "tertiary": "#dec29a",
+                      "on-background": "#e4e2e4",
+                      "outline-variant": "#45464d",
+                      "background": "#131315",
+                      "secondary-fixed": "#ebdcff",
+                      "on-surface": "#e4e2e4",
+                      "surface-bright": "#39393b",
+                      "on-primary-fixed": "#131b2e",
+                      "on-secondary": "#3f0689",
+                      "on-secondary-fixed-variant": "#572ba0",
+                      "secondary": "#d3bbff",
+                      "on-tertiary": "#3e2d11",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "secondary-fixed-dim": "#d3bbff",
+                      "tertiary-container": "#231500",
+                      "on-error": "#690005",
+                      "primary-fixed-dim": "#bec6e0",
+                      "surface-container-highest": "#353436",
+                      "primary-container": "#0f172a",
+                      "inverse-surface": "#e4e2e4",
+                      "on-tertiary-fixed": "#271901",
+                      "error-container": "#93000a",
+                      "tertiary-fixed-dim": "#dec29a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "md": "16px",
+                      "container-max": "1440px",
+                      "base": "4px",
+                      "lg": "24px",
+                      "xs": "4px",
+                      "sm": "8px",
+                      "xl": "40px",
+                      "gutter": "20px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-md": ["JetBrains Mono"],
+                      "headline-md": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "label-sm": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { background-color: #020617; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
+        }
+        .sparkline {
+            height: 30px;
+            width: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(222, 194, 154, 0.1) 50%, transparent 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .sparkline::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #dec29a;
+            box-shadow: 0 0 10px #dec29a;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #353436; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-on-surface font-body-md overflow-x-hidden">
+<!-- Side Navigation Shell -->
+<nav class="fixed left-0 top-0 h-screen w-[80px] hover:w-[240px] transition-all duration-300 z-50 bg-surface/40 backdrop-blur-lg border-r border-white/10 shadow-2xl flex flex-col py-lg group">
+<div class="px-md mb-xl flex items-center overflow-hidden whitespace-nowrap">
+<div class="w-10 h-10 bg-secondary-container rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-secondary-container">sports_cricket</span>
+</div>
+<div class="ml-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">IPL Analytics</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">~By Ninganna</p>
+</div>
+</div>
+<div class="flex-1 space-y-sm px-sm overflow-hidden">
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../tournament_overview/code.html">
+<span class="material-symbols-outlined mr-md">dashboard</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../team_analysis/code.html">
+<span class="material-symbols-outlined mr-md">groups</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Team Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-secondary-fixed-dim bg-secondary-container/30 border-l-4 border-secondary transition-all duration-200" href="../batting_analysis/code.html">
+<span class="material-symbols-outlined mr-md" style="font-variation-settings: 'FILL' 1;">sports_cricket</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Batting Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../bowling_analysis/code.html">
+<span class="material-symbols-outlined mr-md">sports_baseball</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Bowling Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../match_analysis/code.html">
+<span class="material-symbols-outlined mr-md">analytics</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Match Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../player_comparison/code.html">
+<span class="material-symbols-outlined mr-md">compare_arrows</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Player Comparison</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../venue_analysis/code.html">
+<span class="material-symbols-outlined mr-md">stadium</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Venue Analysis</span>
+</a>
+</div>
+<div class="px-sm mb-md">
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../settings/code.html">
+<span class="material-symbols-outlined mr-md">settings</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="ml-[80px] min-h-screen relative p-xl flex flex-col gap-xl">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 w-full z-40 bg-surface/40 backdrop-blur-md border-b border-white/10 shadow-sm flex justify-between items-center px-xl h-20 -mx-xl -mt-xl mb-xl">
+<div class="flex items-center gap-xl">
+<div class="relative flex items-center bg-surface-container-low px-md py-sm rounded-full w-96 focus-within:ring-1 focus-within:ring-primary/50">
+<span class="material-symbols-outlined text-on-surface-variant mr-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full placeholder-on-surface-variant" placeholder="Search Players, Stats or Teams..." type="text"/>
+</div>
+<nav class="hidden md:flex gap-lg">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-sm text-label-sm uppercase tracking-widest" href="#">All Seasons</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest" href="#">All Teams</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm px-md py-sm rounded-full bg-error-container/20 border border-error/20">
+<div class="w-2 h-2 rounded-full bg-error animate-pulse"></div>
+<span class="text-label-sm font-label-sm text-error uppercase">IPL Matches Data</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full border border-white/20 overflow-hidden">
+<img alt="Analyst Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate analyst with short dark hair, wearing a navy blue suit and a crisp white shirt. The background is a softly blurred office with blue-toned ambient lighting. The mood is highly professional and focused, fitting for an elite sports scout." src="https://grabcad.com/screenshots/pics/d2004693a143f320680d7291ff371eab/large.png"/>
+</div>
+</div>
+</header>
+<!-- Dynamic Filter Bar -->
+<section class="flex flex-wrap items-center gap-md glass-panel p-md rounded-xl">
+<span class="text-label-md font-label-md text-on-tertiary-fixed-variant flex items-center gap-sm">
+<span class="material-symbols-outlined">filter_list</span>
+FILTERS:
+</span>
+<div class="flex gap-sm">
+<select class="bg-surface-container-high border-none rounded-lg font-label-md text-label-md px-lg py-sm focus:ring-1 focus:ring-secondary">
+<option>All Seasons</option>
+<option>Season: 2024</option>
+<option>Season: 2023</option>
+<option>Season: 2022</option>
+<option>Season: 2021</option>
+<option>Season: 2020</option>
+<option>Season: 2019</option>
+<option>Season: 2018</option>
+<option>Season: 2017</option>
+<option>Season: 2016</option>
+<option>Season: 2015</option>
+<option>Season: 2014</option>
+<option>Season: 2013</option>
+<option>Season: 2012</option>
+<option>Season: 2011</option>
+<option>Season: 2010</option>
+<option>Season: 2009</option>
+<option>Season: 2008</option>
+</select>
+<select class="bg-surface-container-high border-none rounded-lg font-label-md text-label-md px-lg py-sm focus:ring-1 focus:ring-secondary">
+<option>All Teams</option>
+<option>Team: Mumbai Indians</option>
+<option>Team: Chennai Super Kings</option>
+<option>Team: Kolkata Knight Riders</option>
+<option>Team: Delhi [DC/DD]</option>
+<option>Team: Hyderabad[SRH/DC]</option>
+<option>Team: Punjab[PBKS/KXIP]</option>
+<option>Team: Rajasthan Royals</option>
+<option>Team: Royal Challengers Bangalore</option>
+</select>
+<select class="bg-surface-container-high border-none rounded-lg font-label-md text-label-md px-lg py-sm focus:ring-1 focus:ring-secondary">
+<option>Player Role: All Batsmen</option>
+<option>Player Role: Openers</option>
+<option>Player Role: Finishers</option>
+</select>
+</div>
+<div class="ml-auto flex gap-sm">
+</div>
+</section>
+<!-- KPI Grid -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="glass-card p-lg rounded-xl flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest">Most Runs</span>
+<span class="material-symbols-outlined text-tertiary">trending_up</span>
+</div>
+<div id="kpi-runs-val" class="text-display-lg font-display-lg font-bold text-tertiary">-</div>
+<div id="kpi-runs-name" class="text-label-md font-label-md text-on-surface-variant">-</div>
+<div class="sparkline mt-md"></div>
+</div>
+<div class="glass-card p-lg rounded-xl flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest">Highest Score</span>
+<span class="material-symbols-outlined text-tertiary">workspace_premium</span>
+</div>
+<div id="kpi-score-val" class="text-display-lg font-display-lg font-bold text-tertiary">-</div>
+<div id="kpi-score-name" class="text-label-md font-label-md text-on-surface-variant">-</div>
+<div class="sparkline mt-md"></div>
+</div>
+<div class="glass-card p-lg rounded-xl flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest">Best Average</span>
+<span class="material-symbols-outlined text-tertiary">equalizer</span>
+</div>
+<div id="kpi-avg-val" class="text-display-lg font-display-lg font-bold text-tertiary">-</div>
+<div id="kpi-avg-name" class="text-label-md font-label-md text-on-surface-variant">-</div>
+<div class="sparkline mt-md"></div>
+</div>
+<div class="glass-card p-lg rounded-xl flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest">Best Strike Rate</span>
+<span class="material-symbols-outlined text-tertiary">bolt</span>
+</div>
+<div id="kpi-sr-val" class="text-display-lg font-display-lg font-bold text-tertiary">-</div>
+<div id="kpi-sr-name" class="text-label-md font-label-md text-on-surface-variant">-</div>
+<div class="sparkline mt-md"></div>
+</div>
+</section>
+<!-- Visual Analytics Grid -->
+<section class="grid grid-cols-12 gap-gutter">
+<!-- Horizontal Bar: Top Scorer -->
+<div class="col-span-12 lg:col-span-8 glass-card p-xl rounded-xl">
+<div class="flex justify-between items-center mb-xl">
+<h3 class="font-headline-md text-headline-md font-bold flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">bar_chart</span>
+Top 5 Run Scorers 
+</h3>
+<div class="flex gap-sm">
+<button class="w-8 h-8 rounded bg-white/5 flex items-center justify-center text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-sm">fullscreen</span>
+</button>
+</div>
+</div>
+<div class="space-y-lg">
+<!-- Stat Rows -->
+<div class="grid grid-cols-12 items-center gap-md">
+<div class="col-span-3 text-label-md font-label-md">V. Kohli (RCB)</div>
+<div class="col-span-8">
+<div class="h-4 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container rounded-full" style="width: 100%;"></div>
+</div>
+</div>
+<div class="col-span-1 text-right text-label-md font-bold">8014</div>
+</div>
+<div class="grid grid-cols-12 items-center gap-md">
+<div class="col-span-3 text-label-md font-label-md">S. Dhawan (PBKS)</div>
+<div class="col-span-8">
+<div class="h-4 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container rounded-full opacity-90" style="width: 78%;"></div>
+</div>
+</div>
+<div class="col-span-1 text-right text-label-md font-bold">6769</div>
+</div>
+<div class="grid grid-cols-12 items-center gap-md">
+<div class="col-span-3 text-label-md font-label-md">RG. Sharma (MI)</div>
+<div class="col-span-8">
+<div class="h-4 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container rounded-full opacity-80" style="width: 76%;"></div>
+</div>
+</div>
+<div class="col-span-1 text-right text-label-md font-bold">6630</div>
+</div>
+<div class="grid grid-cols-12 items-center gap-md">
+<div class="col-span-3 text-label-md font-label-md">DA. Warner (DC)</div>
+<div class="col-span-8">
+<div class="h-4 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container rounded-full opacity-70" style="width: 71%;"></div>
+</div>
+</div>
+<div class="col-span-1 text-right text-label-md font-bold">6567</div>
+</div>
+<div class="grid grid-cols-12 items-center gap-md">
+<div class="col-span-3 text-label-md font-label-md">SK. Raina (CSK)</div>
+<div class="col-span-8">
+<div class="h-4 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container rounded-full opacity-60" style="width: 66%;"></div>
+</div>
+</div>
+<div class="col-span-1 text-right text-label-md font-bold">5536</div>
+</div>
+</div>
+</div>
+<!-- Area Chart: Runs by Season (Representation) -->
+<div class="col-span-12 lg:col-span-4 glass-card p-xl rounded-xl flex flex-col">
+<h3 class="font-headline-md text-headline-md font-bold mb-xl flex items-center gap-sm">
+<span class="material-symbols-outlined text-tertiary">show_chart</span>
+                    Runs Trend
+                </h3>
+<div class="flex-1 relative flex items-end gap-sm h-64 border-l border-b border-white/10 p-sm">
+<div class="flex-1 bg-tertiary/20 rounded-t-lg relative group transition-all" style="height: 40%;">
+<div class="absolute inset-x-0 bottom-full mb-2 opacity-0 group-hover:opacity-100 text-center font-label-sm text-tertiary">2021</div>
+</div>
+<div class="flex-1 bg-tertiary/40 rounded-t-lg relative group transition-all" style="height: 65%;">
+<div class="absolute inset-x-0 bottom-full mb-2 opacity-0 group-hover:opacity-100 text-center font-label-sm text-tertiary">2022</div>
+</div>
+<div class="flex-1 bg-tertiary/60 rounded-t-lg relative group transition-all" style="height: 85%;">
+<div class="absolute inset-x-0 bottom-full mb-2 opacity-0 group-hover:opacity-100 text-center font-label-sm text-tertiary">2023</div>
+</div>
+<div class="flex-1 bg-tertiary rounded-t-lg relative group transition-all" style="height: 100%;">
+<div class="absolute inset-x-0 bottom-full mb-2 opacity-0 group-hover:opacity-100 text-center font-label-sm text-tertiary">2024</div>
+</div>
+</div>
+<div class="mt-xl grid grid-cols-2 gap-md">
+<div class="flex flex-col">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase">Total Runs</span>
+<span class="text-headline-md font-headline-md text-tertiary">326,917</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase">Avg Strike Rate</span>
+<span class="text-headline-md font-headline-md text-tertiary">130.66</span>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Comprehensive Table Section -->
+<section class="glass-card rounded-xl overflow-hidden">
+<div class="p-lg border-b border-white/10 flex flex-wrap justify-between items-center gap-md">
+<h3 class="font-headline-md text-headline-md font-bold">Player Statistics</h3>
+<div class="flex items-center gap-md">
+<div class="flex border border-white/10 rounded-lg overflow-hidden">
+<button class="px-md py-sm bg-white/10 text-on-surface text-label-md">ONLY UNTIL 2024 FINAL</button>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container text-label-sm font-label-sm uppercase tracking-widest text-on-surface-variant">
+<th class="px-lg py-md">Player</th>
+<th class="px-lg py-md">Team</th>
+<th class="px-lg py-md text-center">Matches</th>
+<th class="px-lg py-md text-center">Runs</th>
+<th class="px-lg py-md text-center">AVG</th>
+<th class="px-lg py-md text-center">SR</th>
+<th class="px-lg py-md text-center">100s</th>
+<th class="px-lg py-md text-center">50s</th>
+<th class="px-lg py-md text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 rounded bg-secondary-container/30 flex items-center justify-center font-bold text-secondary">VK</div>
+<span class="font-medium">Virat Kohli</span>
+</div>
+</td>
+<td class="px-lg py-md text-on-surface-variant">RCB</td>
+<td class="px-lg py-md text-center">15</td>
+<td class="px-lg py-md text-center font-bold text-tertiary">741</td>
+<td class="px-lg py-md text-center">61.75</td>
+<td class="px-lg py-md text-center">154.70</td>
+<td class="px-lg py-md text-center">1</td>
+<td class="px-lg py-md text-center">5</td>
+<td class="px-lg py-md text-right">
+<button class="text-on-surface-variant hover:text-secondary"><span class="material-symbols-outlined">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 rounded bg-tertiary/30 flex items-center justify-center font-bold text-tertiary">TH</div>
+<span class="font-medium">Travis Head</span>
+</div>
+</td>
+<td class="px-lg py-md text-on-surface-variant">SRH</td>
+<td class="px-lg py-md text-center">15</td>
+<td class="px-lg py-md text-center font-bold text-tertiary">567</td>
+<td class="px-lg py-md text-center">40.50</td>
+<td class="px-lg py-md text-center text-error font-bold">191.55</td>
+<td class="px-lg py-md text-center">1</td>
+<td class="px-lg py-md text-center">4</td>
+<td class="px-lg py-md text-right">
+<button class="text-on-surface-variant hover:text-secondary"><span class="material-symbols-outlined">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 rounded bg-secondary-container/30 flex items-center justify-center font-bold text-secondary">RG</div>
+<span class="font-medium">Ruturaj Gaikwad</span>
+</div>
+</td>
+<td class="px-lg py-md text-on-surface-variant">CSK</td>
+<td class="px-lg py-md text-center">14</td>
+<td class="px-lg py-md text-center font-bold text-tertiary">583</td>
+<td class="px-lg py-md text-center">53.00</td>
+<td class="px-lg py-md text-center">141.16</td>
+<td class="px-lg py-md text-center">1</td>
+<td class="px-lg py-md text-center">4</td>
+<td class="px-lg py-md text-right">
+<button class="text-on-surface-variant hover:text-secondary"><span class="material-symbols-outlined">visibility</span></button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 rounded bg-secondary-container/30 flex items-center justify-center font-bold text-secondary">SS</div>
+<span class="font-medium">Sanju Samson</span>
+</div>
+</td>
+<td class="px-lg py-md text-on-surface-variant">RR</td>
+<td class="px-lg py-md text-center">15</td>
+<td class="px-lg py-md text-center font-bold text-tertiary">531</td>
+<td class="px-lg py-md text-center">48.27</td>
+<td class="px-lg py-md text-center">153.46</td>
+<td class="px-lg py-md text-center">0</td>
+<td class="px-lg py-md text-center">5</td>
+<td class="px-lg py-md text-right">
+<button class="text-on-surface-variant hover:text-secondary"><span class="material-symbols-outlined">visibility</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-lg border-t border-white/10 flex justify-between items-center">
+<span class="text-label-md text-on-surface-variant">Showing Top 10 Players</span>
+<div class="flex gap-sm">
+<button class="w-10 h-10 rounded border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded border border-secondary text-secondary flex items-center justify-center bg-secondary/10">1</button>
+<button class="w-10 h-10 rounded border border-white/10 flex items-center justify-center hover:bg-white/5">2</button>
+<button class="w-10 h-10 rounded border border-white/10 flex items-center justify-center hover:bg-white/5">3</button>
+<button class="w-10 h-10 rounded border border-white/10 flex items-center justify-center hover:bg-white/5">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Detailed Player Profiles (Mini Cards) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="glass-card rounded-xl overflow-hidden group">
+<div class="h-32 bg-gradient-to-r from-secondary-container/20 to-transparent relative overflow-hidden rounded-t-lg">
+<img class="absolute bottom-0 right-4 h-40 object-cover transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500" data-alt="A detailed digital illustration of an elite cricket batsman in a classic batting stance. The player is wearing a professional RCB red and black jersey. The lighting is cinematic, highlighting the fabric texture and the carbon fiber detailing of the helmet. The background features a subtle stadium lights blur." src="https://i.pinimg.com/1200x/6f/a9/d0/6fa9d04043828d86cc151ad7ab1e8fb4.jpg"/>
+</div>
+<div class="p-lg pt-8">
+<h4 class="font-headline-md text-headline-md font-bold">Virat Kohli</h4>
+<p class="text-label-md font-label-md text-secondary uppercase mb-md">Royal Challengers Bengaluru</p>
+<div class="grid grid-cols-3 gap-md border-t border-white/10 pt-md">
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant">Age</span>
+<span class="font-bold text-on-surface">38</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant">DOB</span>
+<span class="font-bold text-on-surface">05 Nov 1988</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant">6s</span>
+<span class="font-bold text-on-surface">316</span>
+</div>
+</div>
+</div>
+</div>
+<div class="glass-card rounded-xl overflow-hidden group">
+<div class="h-32 bg-gradient-to-r from-tertiary/20 to-transparent relative overflow-hidden rounded-t-lg">
+<img class="absolute bottom-0 right-4 h-40 object-cover transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500" data-alt="A high-resolution sports photograph of an IPL cricketer celebrating a century. The player is raising his bat in a majestic stadium setting with vibrant orange and gold lighting reflecting off his helmet. The focus is sharp on the player's intense expression of victory, with the crowd in a soft, atmospheric bokeh." src="https://i.pinimg.com/736x/e7/d2/eb/e7d2eb8fb3e36d0858951227562dadfb.jpg"/>
+</div>
+<div class="p-lg pt-8">
+<h4 class="font-headline-md text-headline-md font-bold">Rohit Sharma</h4>
+<p class="text-label-md font-label-md text-tertiary uppercase mb-md">Mumbai Indians</p>
+<div class="grid grid-cols-3 gap-md border-t border-white/10 pt-md">
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant">Age</span>
+<span class="font-bold text-on-surface">39</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant">DOB</span>
+<span class="font-bold text-on-surface">30 Apr 1987</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant">6s</span>
+<span class="font-bold text-on-surface">323</span>
+</div>
+</div>
+</div>
+</div>
+<div class="glass-card rounded-xl overflow-hidden group">
+<div class="h-32 bg-gradient-to-r from-secondary/20 to-transparent relative overflow-hidden rounded-t-lg">
+<img class="absolute bottom-0 right-4 h-40 object-cover transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500" data-alt="A professional athletic shot of a wicket-keeper batsman during a pre-match training session. The lighting is low-key with sharp rim lighting emphasizing the athletic form. The color palette is dominated by deep blues and purples, giving it a high-tech, fintech-inspired sports look." src="https://i.pinimg.com/1200x/03/68/2a/03682aa98d60051f26b4938d907e9183.jpg"/>
+</div>
+<div class="p-lg pt-8">
+<h4 class="font-headline-md text-headline-md font-bold">MS Dhoni</h4>
+<p class="text-label-md font-label-md text-secondary-fixed-dim uppercase mb-md">Chennai Super Kings</p>
+<div class="grid grid-cols-3 gap-md border-t border-white/10 pt-md">
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant">Age</span>
+<span class="font-bold text-on-surface">44</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant">DOB</span>
+<span class="font-bold text-on-surface">07 Jul 1981</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-on-surface-variant">6s</span>
+<span class="font-bold text-on-surface">264</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<footer class="mt-xl py-xl border-t border-white/10 text-center">
+<div class="flex flex-col items-center gap-md">
+<div class="flex gap-lg font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">
+<a class="hover:text-primary" href="#">Data Integrity</a>
+<a class="hover:text-primary" href="#">API Docs</a>
+<a class="hover:text-primary" href="#">Privacy</a>
+<a class="hover:text-primary" href="#">Legal</a>
+</div>
+<p class="text-label-sm text-on-surface-variant/50">© 2024 IPL Analytics Elite Scouting Command. Real-time data powered by Global Sports Feed.</p>
+</div>
+</footer>
+</main>
+<script>
+    // --- 1. VISUAL EFFECTS ---
+    document.querySelectorAll('.glass-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        document.body.style.backgroundPosition = `center ${window.scrollY * 0.2}px`;
+    });
+
+    // --- 2. DATA PROCESSING & INTERACTION ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const topNavLinks = document.querySelectorAll('header nav a');
+        topNavLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                topNavLinks.forEach(l => l.className = 'text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest');
+                link.className = 'text-primary font-bold border-b-2 border-primary pb-1 font-label-sm text-label-sm uppercase tracking-widest';
+            });
+        });
+
+        let allDeliveries = [];
+        let matchToSeason = {};
+        let allPlayersData = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        const dropdowns = document.querySelectorAll('select');
+        const seasonFilterEl = dropdowns[0];
+        const teamFilterEl = dropdowns[1];
+
+        const getAcronym = (teamName) => {
+            if (!teamName) return "-";
+            if (teamName === "Punjab Kings") return "PBKS";
+            if (teamName === "Kings XI Punjab") return "KXIP";
+            if (teamName === "Sunrisers Hyderabad") return "SRH";
+            return teamName.split(' ').map(w => w[0]).join('').toUpperCase();
+        };
+
+        Papa.parse("../../backend/data/matches.csv", {
+            download: true,
+            header: true,
+            complete: function(matchResults) {
+                const seasonsSet = new Set();
+                
+                matchResults.data.forEach(row => {
+                    if (row.id && row.season) {
+                        matchToSeason[row.id] = row.season;
+                        seasonsSet.add(row.season);
+                    }
+                });
+
+                seasonFilterEl.innerHTML = `<option value="All">All Seasons</option>` + 
+                    [...seasonsSet].sort((a, b) => b.localeCompare(a)).map(s => `<option value="${s}">Season: ${s}</option>`).join('');
+
+                Papa.parse("../../backend/data/deliveries.csv", {
+                    download: true,
+                    header: true,
+                    complete: function(deliveryResults) {
+                        allDeliveries = deliveryResults.data;
+                        
+                        const teamsSet = new Set();
+                        allDeliveries.forEach(row => {
+                            if (row.batting_team) teamsSet.add(row.batting_team);
+                        });
+
+                        teamFilterEl.innerHTML = `<option value="All">All Teams</option>` + 
+                            [...teamsSet].sort().map(t => `<option value="${t}">${t}</option>`).join('');
+
+                        processData();
+                        
+                        seasonFilterEl.addEventListener('change', processData);
+                        teamFilterEl.addEventListener('change', processData);
+                    }
+                });
+            }
+        });
+
+        function processData() {
+            const selectedSeason = seasonFilterEl.value;
+            const selectedTeam = teamFilterEl.value;
+            const stats = {};
+            
+            // Runs Trend tracking
+            const seasonRuns = {}; 
+            const allSeasons = [...new Set(Object.values(matchToSeason))].filter(Boolean).sort();
+            allSeasons.forEach(s => seasonRuns[s] = 0);
+            
+            let overallFilteredRuns = 0;
+            let overallFilteredBalls = 0;
+            
+            allDeliveries.forEach(row => {
+                const batter = row.batter || row.batsman;
+                if (!batter) return;
+
+                const matchId = row.match_id || row.id;
+                const season = matchToSeason[matchId];
+                const team = row.batting_team;
+                const runs = parseInt(row.batsman_runs) || 0;
+                const isWide = parseInt(row.is_wides) || parseInt(row.wide_runs) || 0;
+                const dismissed = row.player_dismissed;
+                
+                // 1. POPULATE RUNS TREND DATA (Filter by team, keep all seasons visible)
+                if (season && (selectedTeam === "All" || team === selectedTeam)) {
+                    seasonRuns[season] += runs;
+                }
+                
+                // 2. APPLY FILTERS FOR TOP 5 AND TABLE
+                if (selectedSeason !== "All" && String(season) !== selectedSeason) return;
+                if (selectedTeam !== "All" && team !== selectedTeam) return;
+
+                overallFilteredRuns += runs;
+                if (!isWide) overallFilteredBalls += 1;
+                
+                if (!stats[batter]) stats[batter] = { runs: 0, balls: 0, outs: 0, matchRuns: {}, lastTeam: "" };
+                
+                stats[batter].runs += runs;
+                if (team) stats[batter].lastTeam = getAcronym(team);
+                
+                if (matchId) {
+                    if (!stats[batter].matchRuns[matchId]) stats[batter].matchRuns[matchId] = 0;
+                    stats[batter].matchRuns[matchId] += runs;
+                }
+                if (!isWide) stats[batter].balls += 1;
+                
+                if (dismissed && dismissed.trim() !== "") {
+                    if (!stats[dismissed]) stats[dismissed] = { runs: 0, balls: 0, outs: 0, matchRuns: {}, lastTeam: "" };
+                    stats[dismissed].outs += 1;
+                }
+            });
+
+            allPlayersData = Object.entries(stats)
+                .map(([name, stat]) => {
+                    let hundreds = 0;
+                    let fifties = 0;
+                    let highest = 0;
+                    
+                    Object.values(stat.matchRuns).forEach(score => {
+                        if (score > highest) highest = score;
+                        if (score >= 100) hundreds++;
+                        else if (score >= 50 && score < 100) fifties++;
+                    });
+
+                    return {
+                        batsman: name,
+                        team: stat.lastTeam || "-",
+                        runs: stat.runs,
+                        balls: stat.balls,
+                        matches: Object.keys(stat.matchRuns).length,
+                        strike_rate: stat.balls > 0 ? (stat.runs / stat.balls) * 100 : 0,
+                        avg: stat.outs > 0 ? (stat.runs / stat.outs) : stat.runs,
+                        outs: stat.outs,
+                        hundreds: hundreds,
+                        fifties: fifties,
+                        highest_score: highest
+                    };
+                })
+                .sort((a, b) => b.runs - a.runs); 
+
+            // --- 3. RENDER TOP 5 BARS ---
+            let top5Container = document.getElementById('top5-scorers-container');
+            if (!top5Container) {
+                // Fallback if ID was not added to HTML
+                const statRows = document.querySelectorAll('.grid.grid-cols-12.items-center.gap-md');
+                if (statRows.length > 0 && statRows[0].parentElement) {
+                    top5Container = statRows[0].parentElement;
+                }
+            }
+
+            if (top5Container) {
+                top5Container.innerHTML = '';
+                const top5 = allPlayersData.slice(0, 5);
+                const maxRuns = top5.length > 0 ? top5[0].runs : 1;
+
+                if (top5.length === 0) {
+                    top5Container.innerHTML = '<div class="text-on-surface-variant text-sm py-4">No data available for selected filters.</div>';
+                } else {
+                    top5.forEach((p, index) => {
+                        const widthPercent = Math.max((p.runs / maxRuns) * 100, 2); 
+                        const opacityClass = index === 0 ? '' : index === 1 ? 'opacity-90' : index === 2 ? 'opacity-80' : index === 3 ? 'opacity-70' : 'opacity-60';
+                        const nameParts = p.batsman.split(' ');
+                        const shortName = nameParts.length > 1 ? `${nameParts[0].charAt(0)}. ${nameParts.slice(1).join(' ')}` : p.batsman;
+
+                        const rowHtml = `
+                            <div class="grid grid-cols-12 items-center gap-md">
+                                <div class="col-span-3 text-label-md font-label-md truncate" title="${p.batsman}">${shortName} (${p.team})</div>
+                                <div class="col-span-8">
+                                    <div class="h-4 bg-white/5 rounded-full overflow-hidden">
+                                        <div class="h-full bg-secondary-container rounded-full ${opacityClass} transition-all duration-700 ease-out" style="width: ${widthPercent}%;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-span-1 text-right text-label-md font-bold">${p.runs.toLocaleString()}</div>
+                            </div>
+                        `;
+                        top5Container.insertAdjacentHTML('beforeend', rowHtml);
+                    });
+                }
+            }
+
+            // --- 4. RENDER TREND BARS ---
+            let trendContainer = document.getElementById('runs-trend-container');
+            if (!trendContainer) {
+                // Fallback if ID was not added to HTML
+                trendContainer = document.querySelector('.flex-1.relative.flex.items-end.gap-sm.h-64.border-l.border-b.border-white\\/10.p-sm');
+            }
+
+            if (trendContainer) {
+                trendContainer.innerHTML = '';
+                const validSeasons = Object.keys(seasonRuns).sort();
+                const maxSeasonRuns = Math.max(...Object.values(seasonRuns), 1);
+
+                validSeasons.forEach(season => {
+                    const sRuns = seasonRuns[season];
+                    const heightPercent = Math.max((sRuns / maxSeasonRuns) * 100, 2);
+                    
+                    let opacityClass = 'bg-tertiary';
+                    if (heightPercent < 30) opacityClass = 'bg-tertiary/20';
+                    else if (heightPercent < 60) opacityClass = 'bg-tertiary/40';
+                    else if (heightPercent < 90) opacityClass = 'bg-tertiary/60';
+
+                    if (selectedSeason !== "All" && String(season) !== selectedSeason) {
+                        opacityClass = 'bg-tertiary/10'; 
+                    }
+
+                    const barHtml = `
+                        <div class="flex-1 ${opacityClass} rounded-t-lg relative group transition-all cursor-pointer hover:brightness-125" style="height: ${heightPercent}%;">
+                            <div class="absolute inset-x-0 bottom-full mb-2 opacity-0 group-hover:opacity-100 text-center font-label-sm text-tertiary transition-opacity select-none pointer-events-none whitespace-nowrap z-20 bg-[#131315]/95 px-2 py-1 rounded border border-white/10 shadow-lg">
+                                ${season}<br/><span class="text-white font-bold">${sRuns.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    `;
+                    trendContainer.insertAdjacentHTML('beforeend', barHtml);
+                });
+            }
+
+            // --- 5. RENDER TREND TOTALS ---
+            let totalRunsEl = document.getElementById('trend-total-runs');
+            let avgSrEl = document.getElementById('trend-avg-sr');
+            
+            // Fallbacks if IDs are missing
+            if (!totalRunsEl || !avgSrEl) {
+                const metricEls = document.querySelectorAll('.text-headline-md.font-headline-md.text-tertiary');
+                if (metricEls.length >= 2) {
+                    if (!totalRunsEl) totalRunsEl = metricEls[0];
+                    if (!avgSrEl) avgSrEl = metricEls[1];
+                }
+            }
+
+            if (totalRunsEl) totalRunsEl.textContent = overallFilteredRuns.toLocaleString();
+            if (avgSrEl) {
+                const calculatedAvgSr = overallFilteredBalls > 0 ? (overallFilteredRuns / overallFilteredBalls) * 100 : 0;
+                avgSrEl.textContent = calculatedAvgSr.toFixed(2);
+            }
+
+            updateKPIs(selectedSeason);
+            
+            currentPage = 1; 
+            renderTable(currentPage);
+            setupPagination();
+        }
+
+        function updateKPIs(selectedSeason) {
+            if (allPlayersData.length > 0) {
+                const topRuns = allPlayersData[0];
+                const topScore = [...allPlayersData].sort((a, b) => b.highest_score - a.highest_score)[0];
+                
+                const minRuns = selectedSeason === "All" ? 300 : 50;
+                const minBalls = selectedSeason === "All" ? 150 : 30;
+
+                let topAvg = [...allPlayersData].filter(p => p.runs >= minRuns).sort((a, b) => b.avg - a.avg)[0] || allPlayersData[0];
+                let topSr = [...allPlayersData].filter(p => p.balls >= minBalls).sort((a, b) => b.strike_rate - a.strike_rate)[0] || allPlayersData[0];
+
+                document.getElementById('kpi-runs-val').innerText = topRuns.runs;
+                document.getElementById('kpi-runs-name').innerText = `${topRuns.batsman} (${topRuns.team})`;
+                
+                document.getElementById('kpi-score-val').innerText = topScore.highest_score + (topScore.outs < topScore.matches ? '*' : '');
+                document.getElementById('kpi-score-name').innerText = `${topScore.batsman} (${topScore.team})`;
+                
+                document.getElementById('kpi-avg-val').innerText = topAvg.avg.toFixed(2);
+                document.getElementById('kpi-avg-name').innerText = `${topAvg.batsman} (${topAvg.team})`;
+                
+                document.getElementById('kpi-sr-val').innerText = topSr.strike_rate.toFixed(1);
+                document.getElementById('kpi-sr-name').innerText = `${topSr.batsman} (${topSr.team})`;
+            } else {
+                ['runs', 'score', 'avg', 'sr'].forEach(k => {
+                    document.getElementById(`kpi-${k}-val`).innerText = '-';
+                    document.getElementById(`kpi-${k}-name`).innerText = 'No Data';
+                });
+            }
+        }
+
+        function renderTable(page) {
+            const tbody = document.querySelector('tbody');
+            if (!tbody) return;
+            tbody.innerHTML = ''; 
+
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedPlayers = allPlayersData.slice(startIndex, endIndex);
+
+            paginatedPlayers.forEach(player => {
+                const avgDisplay = player.outs > 0 ? player.avg.toFixed(2) : player.avg + '*';
+                
+                const playerName = player.batsman; 
+                const searchQuery = encodeURIComponent(playerName + ' cricketer');
+                const googleSearchUrl = `https://www.google.com/search?q=${searchQuery}`;
+                
+                const row = `
+                    <tr class="hover:bg-white/5 transition-colors group">
+                        <td class="px-lg py-md">
+                            <div class="flex items-center gap-md">
+                                <div class="w-8 h-8 rounded bg-secondary-container/30 flex items-center justify-center font-bold text-secondary">${player.batsman.substring(0,2).toUpperCase()}</div>
+                                <span class="font-medium">${player.batsman}</span>
+                            </div>
+                        </td>
+                        <td class="px-lg py-md text-on-surface-variant font-medium tracking-wide">${player.team}</td>
+                        <td class="px-lg py-md text-center">${player.matches}</td>
+                        <td class="px-lg py-md text-center font-bold text-tertiary">${player.runs}</td>
+                        <td class="px-lg py-md text-center">${avgDisplay}</td>
+                        <td class="px-lg py-md text-center">${player.strike_rate.toFixed(2)}</td>
+                        <td class="px-lg py-md text-center">${player.hundreds}</td>
+                        <td class="px-lg py-md text-center">${player.fifties}</td>
+                        <td class="px-lg py-md text-right">
+                            <a href="${googleSearchUrl}" target="_blank" title="Search ${playerName} on Google" class="text-on-surface-variant hover:text-secondary transition-colors inline-flex p-xs rounded hover:bg-white/10">
+                                <span class="material-symbols-outlined">visibility</span>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+
+            const totalPlayers = allPlayersData.length;
+            const infoText = document.querySelector('.p-lg.border-t .text-label-md');
+            if (infoText) {
+                if (totalPlayers === 0) {
+                    infoText.innerText = `Showing 0 Players`;
+                } else {
+                    infoText.innerText = `Showing ${startIndex + 1} to ${Math.min(endIndex, totalPlayers)} of ${totalPlayers} Players`;
+                }
+            }
+        }
+
+        function setupPagination() {
+            const paginationContainer = document.querySelector('.p-lg.border-t .flex.gap-sm');
+            if (!paginationContainer) return;
+
+            const totalPages = Math.ceil(allPlayersData.length / itemsPerPage);
+            
+            let buttonsHTML = `
+                <button class="prev-btn w-10 h-10 rounded border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors disabled:opacity-50" ${currentPage === 1 || totalPages === 0 ? 'disabled' : ''}>
+                    <span class="material-symbols-outlined">chevron_left</span>
+                </button>
+            `;
+
+            for (let i = 1; i <= Math.min(6, totalPages); i++) {
+                buttonsHTML += `
+                    <button class="page-btn w-10 h-10 rounded border flex items-center justify-center transition-colors ${i === currentPage ? 'border-secondary text-secondary bg-secondary/10' : 'border-white/10 hover:bg-white/5'}" data-page="${i}">${i}</button>
+                `;
+            }
+
+            buttonsHTML += `
+                <button class="next-btn w-10 h-10 rounded border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors disabled:opacity-50" ${currentPage >= totalPages || totalPages === 0 ? 'disabled' : ''}>
+                    <span class="material-symbols-outlined">chevron_right</span>
+                </button>
+            `;
+
+            paginationContainer.innerHTML = buttonsHTML;
+
+            paginationContainer.querySelectorAll('.page-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    currentPage = parseInt(e.target.dataset.page);
+                    renderTable(currentPage);
+                    setupPagination();
+                });
+            });
+
+            const prevBtn = paginationContainer.querySelector('.prev-btn');
+            if(prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderTable(currentPage);
+                        setupPagination();
+                    }
+                });
+            }
+
+            const nextBtn = paginationContainer.querySelector('.next-btn');
+            if(nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderTable(currentPage);
+                        setupPagination();
+                    }
+                });
+            }
+        }
+    });
+</script>
+</body></html>

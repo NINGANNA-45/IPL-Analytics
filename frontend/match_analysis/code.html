@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Match Analysis | IPL Analytics Elite Scouting</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #020617;
+            color: #e4e2e4;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-surface {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pulse-live {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .3; }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-variant": "#353436",
+                      "secondary-container": "#592da2",
+                      "primary-fixed": "#dae2fd",
+                      "error": "#ffb4ab",
+                      "on-surface-variant": "#c6c6cd",
+                      "on-primary-container": "#798098",
+                      "on-secondary-container": "#c8aaff",
+                      "inverse-primary": "#565e74",
+                      "outline": "#909097",
+                      "surface-container-lowest": "#0e0e10",
+                      "surface-container-low": "#1b1b1d",
+                      "inverse-on-surface": "#303032",
+                      "on-tertiary-container": "#957d5a",
+                      "surface-tint": "#bec6e0",
+                      "on-secondary-fixed": "#260059",
+                      "tertiary-fixed": "#fcdeb5",
+                      "surface": "#131315",
+                      "surface-dim": "#131315",
+                      "on-tertiary-fixed-variant": "#574425",
+                      "surface-container": "#1f1f21",
+                      "surface-container-high": "#2a2a2b",
+                      "on-error-container": "#ffdad6",
+                      "on-primary": "#283044",
+                      "primary": "#bec6e0",
+                      "tertiary": "#dec29a",
+                      "on-background": "#e4e2e4",
+                      "outline-variant": "#45464d",
+                      "background": "#131315",
+                      "secondary-fixed": "#ebdcff",
+                      "on-surface": "#e4e2e4",
+                      "surface-bright": "#39393b",
+                      "on-primary-fixed": "#131b2e",
+                      "on-secondary": "#3f0689",
+                      "on-secondary-fixed-variant": "#572ba0",
+                      "secondary": "#d3bbff",
+                      "on-tertiary": "#3e2d11",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "secondary-fixed-dim": "#d3bbff",
+                      "tertiary-container": "#231500",
+                      "on-error": "#690005",
+                      "primary-fixed-dim": "#bec6e0",
+                      "surface-container-highest": "#353436",
+                      "primary-container": "#0f172a",
+                      "inverse-surface": "#e4e2e4",
+                      "on-tertiary-fixed": "#271901",
+                      "error-container": "#93000a",
+                      "tertiary-fixed-dim": "#dec29a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "md": "16px",
+                      "container-max": "1440px",
+                      "base": "4px",
+                      "lg": "24px",
+                      "xs": "4px",
+                      "sm": "8px",
+                      "xl": "40px",
+                      "gutter": "20px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-md": ["JetBrains Mono"],
+                      "headline-md": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "label-sm": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="custom-scrollbar">
+<!-- SideNavBar Anchor -->
+<nav class="fixed left-0 top-0 h-screen w-[80px] hover:w-[240px] transition-all duration-300 z-50 bg-surface/40 backdrop-blur-lg border-r border-white/10 shadow-2xl flex flex-col py-lg group">
+<div class="px-md mb-xl flex items-center overflow-hidden whitespace-nowrap">
+<div class="w-10 h-10 bg-secondary-container rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-secondary-container">sports_cricket</span>
+</div>
+<div class="ml-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">IPL Analytics</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">~By Ninganna</p>
+</div>
+</div>
+<div class="flex-1 space-y-sm px-sm overflow-hidden">
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../tournament_overview/code.html">
+<span class="material-symbols-outlined mr-md">dashboard</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../team_analysis/code.html">
+<span class="material-symbols-outlined mr-md">groups</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Team Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../batting_analysis/code.html">
+<span class="material-symbols-outlined mr-md">sports_cricket</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Batting Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-secondary-fixed-dim bg-secondary-container/30 border-l-4 border-secondary transition-all duration-200" href="../bowling_analysis/code.html">
+<span class="material-symbols-outlined mr-md" style="font-variation-settings: 'FILL' 1;">sports_baseball</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Bowling Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../match_analysis/code.html">
+<span class="material-symbols-outlined mr-md">analytics</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Match Analysis</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../player_comparison/code.html">
+<span class="material-symbols-outlined mr-md">compare_arrows</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Player Comparison</span>
+</a>
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../venue_analysis/code.html">
+<span class="material-symbols-outlined mr-md">stadium</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Venue Analysis</span>
+</a>
+</div>
+<div class="px-sm mb-md">
+<a class="flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200" href="../settings/code.html">
+<span class="material-symbols-outlined mr-md">settings</span>
+<span class="opacity-0 group-hover:opacity-100 font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</nav>
+<div class="mt-auto px-md pb-md group-hover:block">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-white/10 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional sports analyst in a modern office environment, wearing high-tech glasses and a sharp suit, surrounded by multiple glowing screens displaying complex data visualizations and cricket statistics. The lighting is moody and focused, highlighting the person's intense analytical expression against a dark, minimalist backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_l7cteI8wVpM53RAVbSzTOkR8R2WW1qiKpDbidCXrHiqPUAe5fku80_BTr0bhOjhgUFvRnnq4pjU22WcQ7qXuVIe7BiQXn6N6Hlwsbpw670zaLLOy3MZbNawung113FthD6k28dddWZrQH8Iia3DcmhhViKSVa7a-3e4Nd1uB4fU5LhN9419ui-Y2viKVMB_-ZFvMdJPqeGdecvKLJ4pNsm_l3UsaehPfWMfnKQbMxXhT-fRhE6Jfp55sntTyFXGa73yQk4yT2ZcJ"/>
+</div>
+<div class="opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap overflow-hidden">
+<p class="font-label-md text-on-surface text-xs font-bold">Analyst ID: 704</p>
+<p class="text-[10px] text-on-surface-variant">Lvl 4 Strategic Access</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-[80px] min-h-screen">
+<!-- TopNavBar Anchor -->
+<header class="sticky top-0 w-full z-40 bg-surface/40 backdrop-blur-md border-b border-white/10 shadow-sm flex justify-between items-center px-xl h-20">
+<div class="flex items-center gap-xl">
+<div class="flex items-center gap-sm">
+<div class="w-3 h-3 bg-error rounded-full pulse-live"></div>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface">Live Match Engine</span>
+</div>
+<!-- Filters -->
+<div class="hidden lg:flex items-center gap-xs bg-surface-container-low p-1 rounded-xl">
+<button class="px-md py-sm bg-secondary-container/30 text-secondary font-label-sm text-label-sm rounded-lg transition-all">2024 Season</button>
+<button class="px-md py-sm text-on-surface-variant font-label-sm text-label-sm rounded-lg hover:bg-white/5">All Teams</button>
+<button class="px-md py-sm text-on-surface-variant font-label-sm text-label-sm rounded-lg hover:bg-white/5">Venues</button>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant" data-icon="search">search</span>
+<input class="bg-surface-container-low border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-secondary/50 transition-all w-64 text-on-surface" placeholder="Search matches, results, or teams..." type="text"/>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="max-w-container-max mx-auto p-xl space-y-xl">
+<!-- Page Header -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-surface tracking-tighter">Match Analysis</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Strategic deep-dive into performance outcomes across the 2024 season.</p>
+</div>
+<div class="flex gap-md">
+<button class="flex items-center gap-2 px-lg py-md bg-secondary text-on-secondary font-label-md text-label-md rounded-xl font-bold shadow-lg shadow-secondary/20 hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                        Export Report
+                    </button>
+</div>
+</div>
+<!-- KPI Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Highest Team Total -->
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between h-40">
+<div>
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant">Highest Team Total</span>
+<div class="flex items-baseline gap-2 mt-sm">
+<span class="font-label-md text-headline-md text-secondary tracking-tighter">277/3</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">SRH</span>
+</div>
+</div>
+<div class="w-full h-8 flex items-end gap-[2px]">
+<div class="w-full bg-secondary/10 h-[20%] rounded-t-sm"></div>
+<div class="w-full bg-secondary/20 h-[45%] rounded-t-sm"></div>
+<div class="w-full bg-secondary/30 h-[30%] rounded-t-sm"></div>
+<div class="w-full bg-secondary h-[90%] rounded-t-sm"></div>
+<div class="w-full bg-secondary/40 h-[60%] rounded-t-sm"></div>
+</div>
+</div>
+<!-- Lowest Team Total -->
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between h-40">
+<div>
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant">Lowest Team Total</span>
+<div class="flex items-baseline gap-2 mt-sm">
+<span class="font-label-md text-headline-md text-tertiary tracking-tighter">112/10</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">RR</span>
+</div>
+</div>
+<div class="w-full h-8 flex items-end gap-[2px]">
+<div class="w-full bg-tertiary/60 h-[80%] rounded-t-sm"></div>
+<div class="w-full bg-tertiary/40 h-[65%] rounded-t-sm"></div>
+<div class="w-full bg-tertiary h-[15%] rounded-t-sm"></div>
+<div class="w-full bg-tertiary/20 h-[40%] rounded-t-sm"></div>
+<div class="w-full bg-tertiary/30 h-[55%] rounded-t-sm"></div>
+</div>
+</div>
+<!-- Highest Chase -->
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between h-40">
+<div>
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant">Highest Chase</span>
+<div class="flex items-baseline gap-2 mt-sm">
+<span class="font-label-md text-headline-md text-primary tracking-tighter">262/2</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">PBKS</span>
+</div>
+</div>
+<div class="w-full h-8 flex items-end gap-[2px]">
+<div class="w-full bg-primary/20 h-[30%] rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-[50%] rounded-t-sm"></div>
+<div class="w-full bg-primary h-[95%] rounded-t-sm"></div>
+<div class="w-full bg-primary/60 h-[70%] rounded-t-sm"></div>
+<div class="w-full bg-primary/30 h-[40%] rounded-t-sm"></div>
+</div>
+</div>
+<!-- Closest Match -->
+<div class="glass-card p-lg rounded-xl flex flex-col justify-between h-40">
+<div>
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant">Closest Match</span>
+<div class="flex items-baseline gap-2 mt-sm">
+<span class="font-label-md text-headline-md text-error tracking-tighter">1 RUN</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">KKR vs RCB</span>
+</div>
+</div>
+<div class="flex items-center gap-2 mt-auto">
+<span class="material-symbols-outlined text-error text-sm" data-icon="warning" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">High Volatility Event</span>
+</div>
+</div>
+</div>
+<!-- Main Charts Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- 1st Innings Score Distribution -->
+<div class="col-span-12 lg:col-span-8 glass-card rounded-xl p-xl">
+<div class="flex justify-between items-start mb-xl">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">1st Innings Score Distribution</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Seasonal Histogram</p>
+</div>
+<div class="flex gap-sm">
+<span class="flex items-center gap-1 text-on-surface-variant text-xs"><div class="w-2 h-2 rounded-full bg-secondary"></div> 2024</span>
+<span class="flex items-center gap-1 text-on-surface-variant text-xs"><div class="w-2 h-2 rounded-full bg-white/20"></div> 2023</span>
+</div>
+</div>
+<div class="h-[300px] w-full flex items-end gap-2 px-4 relative">
+<!-- Simulated Chart Grid -->
+<div class="absolute inset-0 flex flex-col justify-between py-2 border-l border-white/10 pointer-events-none">
+<div class="w-full border-t border-white/5"></div>
+<div class="w-full border-t border-white/5"></div>
+<div class="w-full border-t border-white/5"></div>
+<div class="w-full border-t border-white/5"></div>
+</div>
+<!-- Bars -->
+<div class="flex-1 bg-secondary/40 rounded-t-sm h-[20%] group relative">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface text-xs p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap">120-140 Runs: 4 Matches</div>
+</div>
+<div class="flex-1 bg-secondary/60 rounded-t-sm h-[40%] group relative"></div>
+<div class="flex-1 bg-secondary/80 rounded-t-sm h-[75%] group relative"></div>
+<div class="flex-1 bg-secondary rounded-t-sm h-[95%] group relative">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface text-xs p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap font-bold">180-200 Runs: 22 Matches</div>
+</div>
+<div class="flex-1 bg-secondary/70 rounded-t-sm h-[60%] group relative"></div>
+<div class="flex-1 bg-secondary/50 rounded-t-sm h-[35%] group relative"></div>
+<div class="flex-1 bg-secondary/30 rounded-t-sm h-[15%] group relative"></div>
+</div>
+<div class="flex justify-between mt-md px-4 font-label-sm text-label-sm text-on-surface-variant">
+<span>120</span><span>140</span><span>160</span><span>180</span><span>200</span><span>220</span><span>240+</span>
+</div>
+</div>
+<!-- Chasing vs Defending -->
+<div class="col-span-12 lg:col-span-4 glass-card rounded-xl p-xl flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Chasing vs Defending</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xl">Win Probability Matrix</p>
+<div class="flex-1 flex items-center justify-center relative">
+<!-- Custom CSS Donut Chart -->
+<div class="w-48 h-48 rounded-full border-[16px] border-surface-container-high relative flex items-center justify-center" style="background: conic-gradient(#d3bbff 0% 58%, #1e293b 58% 100%);">
+<div class="w-32 h-32 rounded-full bg-surface-container flex flex-col items-center justify-center shadow-inner">
+<span class="text-secondary font-headline-md text-display-lg leading-none tracking-tighter">58%</span>
+<span class="text-on-surface-variant text-[10px] uppercase font-bold">Chasing Win</span>
+</div>
+</div>
+</div>
+<div class="space-y-md mt-xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-secondary"></div>
+<span class="text-on-surface font-label-sm text-label-sm">Wins Chasing</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">42 Matches</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-slate-700"></div>
+<span class="text-on-surface font-label-sm text-label-sm">Wins Defending</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">30 Matches</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Lower Charts & Content Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Recent Matches Timeline -->
+<div class="col-span-12 lg:col-span-4 glass-card rounded-xl p-xl h-[500px] flex flex-col">
+<div class="flex justify-between items-center mb-xl">
+<h3 class="font-headline-md text-headline-md text-on-surface">Recent Timeline</h3>
+<span class="bg-secondary/10 text-secondary text-[10px] px-2 py-1 rounded font-bold">SEASON 2024</span>
+</div>
+<div class="flex-1 overflow-y-auto pr-md custom-scrollbar space-y-lg">
+<!-- Match Card 1 -->
+<div class="relative pl-8 border-l border-white/10 pb-2">
+<div class="absolute -left-[5px] top-0 w-[9px] h-[9px] bg-secondary rounded-full shadow-[0_0_10px_rgba(211,187,255,0.6)]"></div>
+<div class="bg-white/5 p-md rounded-lg hover:bg-white/10 transition-colors cursor-pointer border border-white/5">
+<div class="flex justify-between items-center mb-2">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold">Final - Match 74</span>
+<span class="text-[10px] text-on-surface-variant">26 MAY</span>
+</div>
+<div class="flex items-center justify-between gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-white/10 overflow-hidden mb-1 flex items-center justify-center">
+<span class="text-[10px] font-bold">KKR</span>
+</div>
+<span class="font-label-sm text-[11px] text-secondary">114/2</span>
+</div>
+<span class="text-on-surface-variant font-label-md text-xs italic">vs</span>
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-white/10 overflow-hidden mb-1 flex items-center justify-center">
+<span class="text-[10px] font-bold">SRH</span>
+</div>
+<span class="font-label-sm text-[11px] text-on-surface-variant">113/10</span>
+</div>
+</div>
+<p class="text-[11px] text-center mt-3 text-secondary-fixed-dim bg-secondary-container/20 py-1 rounded">KKR won by 8 wickets</p>
+</div>
+</div>
+<!-- Match Card 2 -->
+<div class="relative pl-8 border-l border-white/10 pb-2">
+<div class="absolute -left-[5px] top-0 w-[9px] h-[9px] bg-white/20 rounded-full"></div>
+<div class="bg-white/5 p-md rounded-lg hover:bg-white/10 transition-colors cursor-pointer border border-white/5">
+<div class="flex justify-between items-center mb-2">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold">Qualifier 2</span>
+<span class="text-[10px] text-on-surface-variant">24 MAY</span>
+</div>
+<div class="flex items-center justify-between gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-white/10 overflow-hidden mb-1 flex items-center justify-center">
+<span class="text-[10px] font-bold">SRH</span>
+</div>
+<span class="font-label-sm text-[11px] text-secondary">175/9</span>
+</div>
+<span class="text-on-surface-variant font-label-md text-xs italic">vs</span>
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-white/10 overflow-hidden mb-1 flex items-center justify-center">
+<span class="text-[10px] font-bold">RR</span>
+</div>
+<span class="font-label-sm text-[11px] text-on-surface-variant">139/7</span>
+</div>
+</div>
+<p class="text-[11px] text-center mt-3 text-on-surface-variant bg-white/5 py-1 rounded">SRH won by 36 runs</p>
+</div>
+</div>
+<!-- Match Card 3 -->
+<div class="relative pl-8 border-l border-white/10">
+<div class="absolute -left-[5px] top-0 w-[9px] h-[9px] bg-white/20 rounded-full"></div>
+<div class="bg-white/5 p-md rounded-lg hover:bg-white/10 transition-colors cursor-pointer border border-white/5">
+<div class="flex justify-between items-center mb-2">
+<span class="text-[10px] text-on-surface-variant uppercase font-bold">Eliminator</span>
+<span class="text-[10px] text-on-surface-variant">22 MAY</span>
+</div>
+<div class="flex items-center justify-between gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-white/10 overflow-hidden mb-1 flex items-center justify-center">
+<span class="text-[10px] font-bold">RR</span>
+</div>
+<span class="font-label-sm text-[11px] text-secondary">174/6</span>
+</div>
+<span class="text-on-surface-variant font-label-md text-xs italic">vs</span>
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-white/10 overflow-hidden mb-1 flex items-center justify-center">
+<span class="text-[10px] font-bold">RCB</span>
+</div>
+<span class="font-label-sm text-[11px] text-on-surface-variant">172/8</span>
+</div>
+</div>
+<p class="text-[11px] text-center mt-3 text-on-surface-variant bg-white/5 py-1 rounded">RR won by 4 wickets</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Toss Impact & Margin Analysis -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-gutter">
+<!-- Winning Margin Analysis -->
+<div class="flex-1 glass-card rounded-xl p-xl">
+<div class="flex justify-between items-start mb-lg">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Winning Margin Analysis</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">By Runs Frequency</p>
+</div>
+<div class="bg-surface-container-high px-4 py-2 rounded-lg flex items-center gap-2">
+<span class="text-tertiary material-symbols-outlined" data-icon="insights">insights</span>
+<span class="text-xs font-bold text-on-surface">Average Margin: 24.2 Runs</span>
+</div>
+</div>
+<div class="h-[120px] flex items-end gap-1">
+<!-- Bar chart simulation -->
+<div class="flex-1 bg-primary/20 h-[30%]"></div>
+<div class="flex-1 bg-primary/30 h-[45%]"></div>
+<div class="flex-1 bg-primary/40 h-[60%]"></div>
+<div class="flex-1 bg-primary/50 h-[80%]"></div>
+<div class="flex-1 bg-primary/60 h-[70%]"></div>
+<div class="flex-1 bg-primary/70 h-[50%]"></div>
+<div class="flex-1 bg-primary/80 h-[35%]"></div>
+<div class="flex-1 bg-primary/90 h-[20%]"></div>
+<div class="flex-1 bg-primary h-[15%]"></div>
+<div class="flex-1 bg-primary/70 h-[10%]"></div>
+<div class="flex-1 bg-primary/40 h-[5%]"></div>
+</div>
+<div class="flex justify-between mt-sm text-[10px] text-on-surface-variant font-label-sm">
+<span>0-10 Runs</span>
+<span>20-30 Runs</span>
+<span>50-60 Runs</span>
+<span>90-100+ Runs</span>
+</div>
+</div>
+<!-- Toss Decision Impact -->
+<div class="flex-1 glass-card rounded-xl p-xl">
+<div class="flex justify-between items-start mb-lg">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Toss Decision Impact</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Conversion Rate to Win</p>
+</div>
+</div>
+<div class="space-y-xl">
+<div class="space-y-sm">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface">Elected to Bat First</span>
+<span class="text-secondary font-bold">48% Win Rate</span>
+</div>
+<div class="w-full h-3 bg-surface-container-high rounded-full overflow-hidden flex">
+<div class="h-full bg-secondary w-[48%]" style="box-shadow: 0 0 15px rgba(211,187,255,0.3)"></div>
+</div>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface">Elected to Bowl First</span>
+<span class="text-primary font-bold">62% Win Rate</span>
+</div>
+<div class="w-full h-3 bg-surface-container-high rounded-full overflow-hidden flex">
+<div class="h-full bg-primary w-[62%]" style="box-shadow: 0 0 15px rgba(190,198,224,0.3)"></div>
+</div>
+</div>
+</div>
+<div class="mt-xl flex items-center gap-4 bg-tertiary/5 p-md border border-tertiary/10 rounded-lg">
+<span class="material-symbols-outlined text-tertiary" data-icon="lightbulb">lightbulb</span>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+<strong class="text-on-surface">Strategic Insight:</strong> Teams choosing to bowl first have a +14% win delta in night matches during the current season, largely attributed to the dew factor at Chepauk and Wankhede stadiums.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+<footer class="mt-xl py-xl border-t border-white/10 text-center">
+<div class="flex flex-col items-center gap-md">
+<div class="flex gap-lg font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">
+<a class="hover:text-primary" href="#">Data Integrity</a>
+<a class="hover:text-primary" href="#">API Docs</a>
+<a class="hover:text-primary" href="#">Privacy</a>
+<a class="hover:text-primary" href="#">Legal</a>
+</div>
+<p class="text-label-sm text-on-surface-variant/50">© 2024 IPL Analytics Elite Scouting Command. Real-time data powered by Global Sports Feed.</p>
+</div>
+</footer>
+</div>
+</main>
+<!-- Interactive Elements Scripts -->
+<script>
+    // --- 1. YOUR EXISTING VISUAL EFFECTS ---
+    document.querySelectorAll('.glass-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        const scroll = window.scrollY;
+        document.body.style.backgroundPosition = `center ${scroll * 0.2}px`;
+    });
+
+
+    // --- 2. NEW NAVIGATION & INTERACTION LOGIC ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const routes = [
+            '../tournament_overview/code.html', // Dashboard
+            '../team_analysis/code.html',       // Team Analysis
+            '../batting_analysis/code.html',    // Batting Analysis
+            '../bowling_analysis/code.html',    // Bowling Analysis
+            '../match_analysis/code.html',      // Match Analysis
+            '../player_comparison/code.html',   // Player Comparison
+            '../venue_analysis/code.html'       // Venue Analysis
+        ];
+
+        const sidebarLinks = document.querySelectorAll('nav.fixed.left-0 .flex-1 a');
+        sidebarLinks.forEach((link, index) => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                window.location.href = routes[index] || '#';
+            });
+        });
+
+        // Settings Link - FIXED PATH
+        const settingsLink = document.querySelector('nav.fixed.left-0 .mb-md a');
+        if (settingsLink) {
+            settingsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = '../settings/code.html'; 
+            });
+        }
+
+        const topNavLinks = document.querySelectorAll('header nav a');
+        topNavLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                topNavLinks.forEach(l => l.className = 'text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest');
+                link.className = 'text-primary font-bold border-b-2 border-primary pb-1 font-label-sm text-label-sm uppercase tracking-widest';
+            });
+        });
+
+        const ledgerButtons = document.querySelectorAll('.border-white\\/10.rounded-lg button');
+        ledgerButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                ledgerButtons.forEach(b => b.className = 'px-md py-sm hover:bg-white/5 text-on-surface-variant text-label-md transition-colors');
+                btn.className = 'px-md py-sm bg-white/10 text-on-surface text-label-md';
+            });
+        });
+
+        const pageButtons = document.querySelectorAll('.p-lg.border-t .flex.gap-sm button:not(:first-child):not(:last-child)');
+        pageButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                pageButtons.forEach(b => b.className = 'w-10 h-10 rounded border border-white/10 flex items-center justify-center hover:bg-white/5');
+                btn.className = 'w-10 h-10 rounded border border-secondary text-secondary flex items-center justify-center bg-secondary/10';
+            });
+        });
+        const currentUrl = window.location.href;
+document.querySelectorAll('nav.fixed.left-0 .flex-1 a').forEach(link => {
+    const href = link.getAttribute('href');
+    if (href !== '#' && currentUrl.includes(href.replace('../', ''))) {
+        link.className = "flex items-center p-md rounded-xl text-secondary-fixed-dim bg-secondary-container/30 border-l-4 border-secondary transition-all duration-200";
+        const icon = link.querySelector('.material-symbols-outlined');
+        if(icon) icon.style.fontVariationSettings = "'FILL' 1";
+    } else {
+        link.className = "flex items-center p-md rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all duration-200";
+        const icon = link.querySelector('.material-symbols-outlined');
+        if(icon) icon.style.fontVariationSettings = "'FILL' 0";
+    }
+});
+    });
+</script>
+
+</body></html>

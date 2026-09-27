@@ -60,5 +60,3 @@ The main purpose of this project is to analyze IPL data and present useful crick
 GitHub: [NINGANNA-45](https://github.com/NINGANNA-45)
 
 ---
-
-⭐ If you find this project useful, consider starring the repository.

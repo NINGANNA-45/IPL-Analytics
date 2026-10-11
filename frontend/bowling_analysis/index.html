@@ -589,7 +589,7 @@ LAST UPDATE: 2024 IPL Final
 
         const nonBowlerWickets = ['run out', 'retired hurt', 'obstructing the field', 'hit ball twice', 'handled the ball', 'timed out'];
 
-        Papa.parse("../../backend/data/matches.csv", {
+        Papa.parse("http://127.0.0.1:5000/data/matches.csv", {
             download: true,
             header: true,
             complete: function(matchResults) {
@@ -607,7 +607,7 @@ LAST UPDATE: 2024 IPL Final
                         [...seasonsSet].sort((a, b) => b.localeCompare(a)).map(s => `<option value="${s}">Season: ${s}</option>`).join('');
                 }
 
-                Papa.parse("../../backend/data/deliveries.csv", {
+                Papa.parse("http://127.0.0.1:5000/data/deliveries.csv", {
                     download: true,
                     header: true,
                     complete: function(deliveryResults) {

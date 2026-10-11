@@ -466,7 +466,7 @@
 
         if (!p1Input || !p2Input || !metricsContainer) return;
 
-        Papa.parse("http://127.0.0.1:5000/data/matches.csv", {
+        Papa.parse("https://ipl-analytics-backend-u3k3.onrender.com/data/matches.csv", {
             download: true,
             header: true,
             complete: function(matchResults) {
@@ -478,7 +478,7 @@
                     }
                 });
 
-                Papa.parse("http://127.0.0.1:5000/data/deliveries.csv", {
+                Papa.parse("https://ipl-analytics-backend-u3k3.onrender.com/data/deliveries.csv", {
                     download: true,
                     header: true,
                     complete: function(deliveryResults) {

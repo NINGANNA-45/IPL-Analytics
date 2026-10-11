@@ -633,7 +633,7 @@ Top 5 Run Scorers
             return teamName.split(' ').map(w => w[0]).join('').toUpperCase();
         };
 
-        Papa.parse("http://127.0.0.1:5000/data/matches.csv", {
+        Papa.parse("https://ipl-analytics-backend-u3k3.onrender.com/data/matches.csv", {
             download: true,
             header: true,
             complete: function(matchResults) {
@@ -649,7 +649,7 @@ Top 5 Run Scorers
                 seasonFilterEl.innerHTML = `<option value="All">All Seasons</option>` + 
                     [...seasonsSet].sort((a, b) => b.localeCompare(a)).map(s => `<option value="${s}">Season: ${s}</option>`).join('');
 
-                Papa.parse("http://127.0.0.1:5000/data/deliveries.csv", {
+                Papa.parse("https://ipl-analytics-backend-u3k3.onrender.com/data/deliveries.csv", {
                     download: true,
                     header: true,
                     complete: function(deliveryResults) {
